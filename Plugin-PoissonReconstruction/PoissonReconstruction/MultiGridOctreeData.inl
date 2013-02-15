@@ -918,7 +918,6 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
     PointStream< Real >* pointStream;
     char* ext = GetFileExtension( fileName );
     if     ( !strcasecmp( ext , "bnpts" ) ) pointStream = new BinaryPointStream< Real >( fileName );
-    else if( !strcasecmp( ext , "ply"   ) ) pointStream = new    PLYPointStream< Real >( fileName );
     else                                    pointStream = new  ASCIIPointStream< Real >( fileName );
     delete[] ext;
 
