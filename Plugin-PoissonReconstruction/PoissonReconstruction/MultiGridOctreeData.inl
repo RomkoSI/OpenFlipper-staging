@@ -94,7 +94,9 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
     std::vector< std::pair< int , int > > spans( this->maxDepth , std::pair< int , int >( -1 , -1 ) );
     int minDepth , off[3];
     cData.offsets.resize( this->maxDepth , -1 );
-    int start , end;
+    int start = 0;
+    int end   = 0;
+    
     if( rootNode ) rootNode->depthAndOffset( minDepth , off ) , start = end = rootNode->nodeData.nodeIndex;
     else
     {
@@ -337,7 +339,12 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
                     int ac = Square::AntipodalCornerIndex( Square::CornerIndex( i , j ) );
                     for( unsigned int cc=0 ; cc<Square::CORNERS ; cc++ )
                     {
-                        int ii , jj , x , y , z;
+                        int ii  = 0;
+                        int jj  = 0;
+                        int x   = 0; 
+                        int y   = 0;
+                        int z   = 0;
+                            
                         Square::FactorCornerIndex( cc , ii , jj );
                         ii += i , jj += j;
                         switch( o )

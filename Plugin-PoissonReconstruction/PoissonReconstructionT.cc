@@ -78,7 +78,11 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
     Real isoValue = 0;
 
     Octree<2> tree;
+#ifdef USE_OMP
     tree.threads = omp_get_num_procs();
+#else
+    tree.threads = 1;
+#endif
     TreeOctNode::SetAllocator( MEMORY_ALLOCATOR_BLOCK_SIZE );
 
     tree.setBSplineData( m_parameter.Depth );
