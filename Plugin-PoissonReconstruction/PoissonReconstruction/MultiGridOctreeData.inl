@@ -2857,7 +2857,8 @@ void Octree< Degree >::FaceEdgesFunction::Function( const TreeOctNode* node1 , c
                         (*vertexCount)[key1].second--;
                         (*vertexCount)[key2].second++;
                     }
-                    else fprintf( stderr , "Bad Edge 1: %d %lld\n" , ri1.key , ri2.key );
+                    else 
+                      std::cerr << "Bad Edge 1:" << ri1.key << " " <<  ri2.key << std::endl;
                 }
     }
 }
@@ -4024,7 +4025,7 @@ void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vect
                         {
                             int r1 = MarchingCubes::HasEdgeRoots( node->nodeData.mcIndex , isoTri[j*3+k] );
                             int r2 = MarchingCubes::HasEdgeRoots( node->nodeData.mcIndex , isoTri[j*3+((k+1)%3)] );
-                            fprintf( stderr , "Bad Edge 2: %d %d\t%d %d\n" , ri1.key , ri2.key , r1 , r2 );
+                            std::cerr << "Bad Edge 2:" << ri1.key << " " <<  ri2.key << "\t" << r1 << " " <<  r2 << std::endl;
                         }
                     }
         }

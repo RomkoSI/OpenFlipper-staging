@@ -44,8 +44,8 @@ public:
   */
 template<class T>
 class AllocatorT{
-	int blockSize;
-	int index,remains;
+	size_t blockSize;
+	size_t index,remains;
 	std::vector<T*> memory;
 public:
     AllocatorT(void){
@@ -121,7 +121,7 @@ public:
 		}
 	}
 
-	/** This method initiallizes the constructor and the blockSize variable specifies the
+	/** This method initializes the constructor and the blockSize variable specifies the
 	  * the number of objects that should be pre-allocated at a time. */
 	void set( int blockSize){
 		reset();
@@ -135,11 +135,11 @@ public:
 	  * more memory. Note that if the number of objects requested is larger than the value blockSize with which
 	  * the allocator was initialized, the request for memory will fail.
 	  */
-	T* newElements( int elements=1){
+	T* newElements( size_t elements=1){
 		T* mem;
 		if(!elements){return NULL;}
 		if(elements>blockSize){
-			fprintf(stderr,"Allocator Error, elements bigger than block-size: %d>%d\n",elements,blockSize);
+		  std::cerr << "Allocator Error, elements bigger than block-size: " << elements << ">" << "blockSize" << std::endl;
 			return NULL;
 		}
 		if(remains<elements){
