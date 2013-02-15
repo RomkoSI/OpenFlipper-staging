@@ -2444,7 +2444,7 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
     AdjacencySetFunction asf;
     AdjacencyCountFunction acf;
     double systemTime = 0 , solveTime = 0 , memUsage = 0 , evaluateTime = 0 , gTime , sTime;
-    Real myRadius;// , myRadius2;
+    Real myRadius, myRadius2;
 
     if( depth>_minDepth )
     {
