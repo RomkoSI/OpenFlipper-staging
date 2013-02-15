@@ -4163,8 +4163,8 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
         bool isCoplanar = false;
 
         if( barycenters )
-            for( int i=0 ; i<int(edges.size()) ; i++ )
-                for( int j=0 ; j<i ; j++ )
+            for( unsigned int i=0 ; i<int(edges.size()) ; i++ )
+                for( unsigned int j=0 ; j<i ; j++ )
                     if( (i+1)%edges.size()!=j && (j+1)%edges.size()!=i )
                     {
                         Point3D< Real > v1 , v2;
