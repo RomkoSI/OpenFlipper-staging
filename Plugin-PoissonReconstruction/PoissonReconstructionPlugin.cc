@@ -104,11 +104,6 @@ void PoissonPlugin::initializePlugin(){
 
 
 void PoissonPlugin::slotPoissonReconstruct(){
-  std::cerr << "Reconstruct" << std::endl;
-
-  // Add empty triangle mesh
-  int meshId = -1;
-  emit addEmptyObject ( DATA_TRIANGLE_MESH, meshId );
 
   unsigned int n_points = 0;
   std::vector< Real > pt_data;
@@ -144,7 +139,7 @@ void PoissonPlugin::slotPoissonReconstruct(){
   // Get triangle mesh
   TriMesh* final_mesh = NULL;
 
-  PluginFunctions::getMesh(meshId,final_mesh);
+
 
   ACG::PoissonReconstructionT<TriMesh> pr;
 
@@ -153,12 +148,22 @@ void PoissonPlugin::slotPoissonReconstruct(){
 
   if ( !pt_data.empty() ) {
 
+    // Add empty triangle mesh
+    int meshId = -1;
+    emit addEmptyObject ( DATA_TRIANGLE_MESH, meshId );
+
+    TriMeshObject* finalObject = PluginFunctions::triMeshObject(meshId);
+
+    PluginFunctions::getMesh(meshId,final_mesh);
+
     if ( pr.run( pt_data, *final_mesh, params ) ) {
       emit log(LOGINFO,"Reconstruction succeeded");
       emit updatedObject(meshId,UPDATE_ALL);
+      finalObject->setName("Poisson Reconstruction.obj");
+      //finalObject->target(true);
     } else {
       emit log(LOGERR,"Reconstruction failed");
-      // TODO: Remove mesh
+      emit deleteObject( meshId );
     }
 
   }

@@ -73,6 +73,7 @@ signals:
   
   // Load/Save Interface
   void addEmptyObject (DataType _type, int& _id);
+  void deleteObject( int _id );
 
   // ToolboxInterface
   //void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
