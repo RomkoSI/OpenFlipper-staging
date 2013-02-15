@@ -3108,7 +3108,7 @@ Real Octree<Degree>::getCenterValue( const OctNode< TreeNodeData , Real >::Const
         }
     if( node->children )
     {
-        for(int i=0;i<Cube::CORNERS;i++){
+        for(unsigned int i=0;i<Cube::CORNERS;i++){
             int ii=Cube::AntipodalCornerIndex(i);
             const TreeOctNode* n=&node->children[i];
             while(1)
@@ -3315,7 +3315,7 @@ void Octree< Degree >::SetIsoCorners( Real isoValue , TreeOctNode* leaf , Sorted
     int mn = 2+o , mx = (1<<d)-2-o;
     isInterior = ( off[0]>=mn && off[0]<mx && off[1]>=mn && off[1]<mx && off[2]>=mn && off[2]<mx );
     nKey.getNeighbors( leaf );
-    for( int c=0 ; c<Cube::CORNERS ; c++ )
+    for( unsigned int c=0 ; c<Cube::CORNERS ; c++ )
     {
         int vIndex = cIndices[c];
         if( valuesSet[vIndex] ) cornerValues[c] = values[vIndex];
@@ -3402,7 +3402,7 @@ int Octree<Degree>::InteriorFaceRootCount(const TreeOctNode* node,const int &fac
             break;
         };
         cnt+=EdgeRootCount(&node->children[c2],e1,maxDepth)+EdgeRootCount(&node->children[c2],e2,maxDepth);
-        for(int i=0;i<Cube::CORNERS/2;i++){if(node->children[corners[i]].children){cnt+=InteriorFaceRootCount(&node->children[corners[i]],faceIndex,maxDepth);}}
+        for(unsigned int i=0;i<Cube::CORNERS/2;i++){if(node->children[corners[i]].children){cnt+=InteriorFaceRootCount(&node->children[corners[i]],faceIndex,maxDepth);}}
     }
     return cnt;
 }
