@@ -1130,7 +1130,6 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
     double pointWeightSum = 0;
     Point3D< Real > min , max , myCenter;
     Real myWidth;
-    int i;
     unsigned int cnt=0;
     TreeOctNode* temp;
 
@@ -1159,7 +1158,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
             }
 
             p = xForm * p;
-            for( i=0 ; i<DIMENSION ; i++ )
+            for( int i=0 ; i<DIMENSION ; i++ )
             {
                 if( !cnt || p[i]<min[i] ) min[i] = p[i];
                 if( !cnt || p[i]>max[i] ) max[i] = p[i];
@@ -1173,7 +1172,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
     }
 
     _scale *= scaleFactor;
-    for( i=0 ; i<DIMENSION ; i++ ) _center[i] -= _scale/2;
+    for( int i=0 ; i<DIMENSION ; i++ ) _center[i] -= _scale/2;
     if( splatDepth>0 )
     {
         double t = Time();
@@ -1267,7 +1266,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
                 }
                 pointWeight = GetSampleWeight( temp , p , neighborKey );
             }
-            for( i=0 ; i<DIMENSION ; i++ ) n[i] *= pointWeight;
+            for( int i=0 ; i<DIMENSION ; i++ ) n[i] *= pointWeight;
             while( d<maxDepth )
             {
                 if( !temp->children ) temp->initChildren();
@@ -1600,16 +1599,17 @@ int Octree< Degree >::SetMatrixRow( const OctNode< TreeNodeData , Real >::Neighb
                             }
                         }
                 }
-    }
-    int minX , maxX , minY , maxY;
+    }    
     for( int x=xStart ; x<=2 ; x++ )
     {
+        int minX , maxX ;
         minX = std::max< int >( 0 , -2+x ) , maxX = std::min< int >( 2 , -2+x+2 );
         int dX = 2-x+3*0;
         for( int y=yStart ; y<yEnd ; y++ )
         {
+            int minY;
             if( x==2 && y>2 ) continue;
-            minY = std::max< int >( 0 , -2+y ) , maxY = std::min< int >( 2 , -2+y+2 );
+            minY = std::max< int >( 0 , -2+y );// , maxY = std::min< int >( 2 , -2+y+2 );
             int dY = 2-y+3*1;
             for( int z=zStart ; z<zEnd ; z++ )
             {
@@ -3371,9 +3371,11 @@ void Octree< Degree >::SetIsoCorners( Real isoValue , TreeOctNode* leaf , Sorted
 
 template<int Degree>
 int Octree<Degree>::InteriorFaceRootCount(const TreeOctNode* node,const int &faceIndex,int maxDepth){
-    int c1,c2,e1,e2,dir,off,cnt=0;
+   
+   int cnt = 0;
     int corners[Cube::CORNERS/2];
     if(node->children){
+        int c1,c2,e1,e2,dir,off;
         Cube::FaceCorners(faceIndex,corners[0],corners[1],corners[2],corners[3]);
         Cube::FactorFaceIndex(faceIndex,dir,off);
         c1=corners[0];
@@ -3871,11 +3873,11 @@ int Octree< Degree >::SetMCRootPositions( TreeOctNode* node , int sDepth , Real 
     if( !MarchingCubes::HasRoots( node->nodeData.mcIndex ) ) return 0;
     for( int i=0 ; i<DIMENSION ; i++ ) for( int j=0 ; j<2 ; j++ ) for( int k=0 ; k<2 ; k++ )
     {
-        long long key;
+       
         eIndex = Cube::EdgeIndex( i , j , k );
         if( GetRootIndex( node , eIndex , fData.depth , ri ) )
         {
-            key = ri.key;
+            long long key = ri.key;
             if( !rootData.interiorRoots || IsBoundaryEdge( node , i , j , k , sDepth ) )
             {
                 hash_map< long long , int >::iterator iter , end;

@@ -74,7 +74,8 @@ template< int Degree > inline int ReflectRight( unsigned int depth , int offset 
 }
 
 template< int Degree , class Real >
-BSplineData<Degree,Real>::BSplineData( void )
+BSplineData<Degree,Real>::BSplineData( void ) :
+  depth(0)
 {
 	vvDotTable = dvDotTable = ddDotTable = NullPointer< Real >();
 	valueTables = dValueTables = NullPointer< Real >();
