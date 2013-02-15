@@ -2411,9 +2411,11 @@ int Octree< Degree >::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes&
     mrVector.resize( threads , M.rows );
 
     if( _boundaryType==0 && depth>3 ) res -= 1<<(depth-2);
-    if( !noSolve )
+    if( !noSolve ) 
+    {
         if( fixedIters>=0 ) iter += SparseSymmetricMatrix< Real >::Solve( M , B , fixedIters                                                           , X , mrVector , Real(1e-10) , 0 , M.rows==res*res*res && !_constrainValues && _boundaryType!=-1 );
         else                iter += SparseSymmetricMatrix< Real >::Solve( M , B , std::max< int >( int( pow( M.rows , ITERATION_POWER ) ) , minIters ) , X , mrVector ,_accuracy    , 0 , M.rows==res*res*res && !_constrainValues && _boundaryType!=-1 );
+    }
     solveTime = Time()-solveTime;
     if( showResidual )
     {
@@ -2540,9 +2542,11 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
         // Since we don't have the full matrix, the system shouldn't be singular, so we shouldn't have to correct it
         sTime=Time();
         Real _accuracy = Real( accuracy / 100000 ) * _M.rows;
-        if( !noSolve )
+        if( !noSolve ) 
+        {
             if( fixedIters>=0 ) iter += SparseSymmetricMatrix< Real >::Solve( _M , _B , fixedIters                                                            , _X , mrVector ,  Real(1e-10) , 0 );
             else                iter += SparseSymmetricMatrix< Real >::Solve( _M , _B , std::max< int >( int( pow( _M.rows , ITERATION_POWER ) ) , minIters ) , _X , mrVector , _accuracy    , 0 );
+        }
         sTime=Time()-sTime;
 
         if( showResidual )
@@ -2832,7 +2836,8 @@ void Octree< Degree >::FaceEdgesFunction::Function( const TreeOctNode* node1 , c
 
         for( int j=0 ; j<count ; j++ )
             for( int k=0 ; k<3 ; k++ )
-                if( fIndex==Cube::FaceAdjacentToEdges( isoTri[j*3+k] , isoTri[j*3+((k+1)%3)] ) )
+                if( fIndex==Cube::FaceAdjacentToEdges( isoTri[j*3+k] , isoTri[j*3+((k+1)%3)] ) ) 
+                {
                     if( GetRootIndex( node1 , isoTri[j*3+k] , maxDepth , ri1 ) && GetRootIndex( node1 , isoTri[j*3+((k+1)%3)] , maxDepth , ri2 ) )
                     {
                         long long key1=ri1.key , key2=ri2.key;
@@ -2852,7 +2857,8 @@ void Octree< Degree >::FaceEdgesFunction::Function( const TreeOctNode* node1 , c
                         (*vertexCount)[key1].second--;
                         (*vertexCount)[key2].second++;
                     }
-                    else fprintf( stderr , "Bad Edge 1: %d %d\n" , ri1.key , ri2.key );
+                    else fprintf( stderr , "Bad Edge 1: %d %lld\n" , ri1.key , ri2.key );
+                }
     }
 }
 
@@ -3993,7 +3999,8 @@ void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vect
             RootInfo ri1 , ri2;
             for( int j=0 ; j<count ; j++ )
                 for( int k=0 ; k<3 ; k++ )
-                    if( fIndex==Cube::FaceAdjacentToEdges( isoTri[j*3+k] , isoTri[j*3+((k+1)%3)] ) )
+                    if( fIndex==Cube::FaceAdjacentToEdges( isoTri[j*3+k] , isoTri[j*3+((k+1)%3)] ) ) 
+                    {
                         if( GetRootIndex( node , isoTri[j*3+k] , fData.depth , ri1 ) && GetRootIndex( node , isoTri[j*3+((k+1)%3)] , fData.depth , ri2 ) )
                         {
                             long long key1 = ri1.key , key2 = ri2.key;
@@ -4019,6 +4026,7 @@ void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vect
                             int r2 = MarchingCubes::HasEdgeRoots( node->nodeData.mcIndex , isoTri[j*3+((k+1)%3)] );
                             fprintf( stderr , "Bad Edge 2: %d %d\t%d %d\n" , ri1.key , ri2.key , r1 , r2 );
                         }
+                    }
         }
     }
     for( int i=0 ; i<int(edges.size()) ; i++ )
@@ -4163,7 +4171,7 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
         bool isCoplanar = false;
 
         if( barycenters )
-            for( unsigned int i=0 ; i<int(edges.size()) ; i++ )
+            for( unsigned int i=0 ; i< edges.size() ; i++ )
                 for( unsigned int j=0 ; j<i ; j++ )
                     if( (i+1)%edges.size()!=j && (j+1)%edges.size()!=i )
                     {
