@@ -593,7 +593,6 @@ Real Octree< Degree >::SplatOrientedPoint( const Point3D<Real>& position , const
     double dx;
     Point3D<Real> n;
     TreeOctNode* temp;
-    int cnt=0;
     double width;
     Point3D< Real > myCenter( Real(0.5) , Real(0.5) , Real(0.5) );
     Real myWidth = Real(1.0);
@@ -946,7 +945,7 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
     for( i=0 ; i<DIMENSION ; i++ ) _center[i] -= _scale/2;
     if( splatDepth>0 )
     {
-        double t = Time();
+        //double t = Time();
         cnt = 0;
         pointStream->reset();
         Point3D< Real > p , n;
@@ -1145,7 +1144,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
     tree.setFullDepth( _minDepth );
     // Read through once to get the center and scale
     {
-        double t = Time();
+        //double t = Time();
         Point3D< Real > p , n;
 
         while ( cnt < _pts_stream.size()/(2*DIMENSION) )
@@ -1173,9 +1172,10 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
 
     _scale *= scaleFactor;
     for( int i=0 ; i<DIMENSION ; i++ ) _center[i] -= _scale/2;
+    
     if( splatDepth>0 )
     {
-        double t = Time();
+        //double t = Time();
         cnt = 0;
         Point3D< Real > p , n;
         while ( cnt < _pts_stream.size()/(2*DIMENSION) )
@@ -1520,7 +1520,7 @@ int Octree< Degree >::SetMatrixRow( const OctNode< TreeNodeData , Real >::Neighb
 
     int count = 0;
     const TreeOctNode* node = neighbors5.neighbors[2][2][2];
-    int index[] = { int( node->off[0] ) , int( node->off[1] ), int( node->off[2] ) };
+    //int index[] = { int( node->off[0] ) , int( node->off[1] ), int( node->off[2] ) };
 
     bool isInterior;
     int d , off[3];
@@ -1602,19 +1602,19 @@ int Octree< Degree >::SetMatrixRow( const OctNode< TreeNodeData , Real >::Neighb
     }    
     for( int x=xStart ; x<=2 ; x++ )
     {
-        int minX , maxX ;
-        minX = std::max< int >( 0 , -2+x ) , maxX = std::min< int >( 2 , -2+x+2 );
-        int dX = 2-x+3*0;
+        //int minX , maxX ;
+        //minX = std::max< int >( 0 , -2+x ) , maxX = std::min< int >( 2 , -2+x+2 );
+        //int dX = 2-x+3*0;
         for( int y=yStart ; y<yEnd ; y++ )
         {
-            int minY;
+            //int minY;
             if( x==2 && y>2 ) continue;
-            minY = std::max< int >( 0 , -2+y );// , maxY = std::min< int >( 2 , -2+y+2 );
-            int dY = 2-y+3*1;
+            //minY = std::max< int >( 0 , -2+y );// , maxY = std::min< int >( 2 , -2+y+2 );
+            //int dY = 2-y+3*1;
             for( int z=zStart ; z<zEnd ; z++ )
             {
                 if( x==2 && y==2 && z>2 ) continue;
-                int dZ = 2-z+3*2;
+                //int dZ = 2-z+3*2;
                 if( neighbors5.neighbors[x][y][z] && neighbors5.neighbors[x][y][z]->nodeData.nodeIndex>=0 )
                 {
                     const TreeOctNode* _node = neighbors5.neighbors[x][y][z];
@@ -1860,7 +1860,7 @@ void Octree< Degree >::UpdateConstraintsFromCoarser( const OctNode< TreeNodeData
         int mn = 4+o , mx = (1<<d)-4-o;
         isInterior = ( off[0]>=mn && off[0]<mx && off[1]>=mn && off[1]<mx && off[2]>=mn && off[2]<mx );
     }
-    Real constraint = Real( 0 );
+    //Real constraint = Real( 0 );
     int depth = node->depth();
     if( depth<=_minDepth ) return;
     // Offset the constraints using the solution from lower resolutions.
@@ -2370,7 +2370,7 @@ int Octree< Degree >::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes&
     int iter = 0;
     PoissonVector< Real > X , B;
     SparseSymmetricMatrix< Real > M;
-    double systemTime=0. , solveTime=0. , updateTime=0. ,  evaluateTime = 0.;
+    double systemTime=0. , solveTime=0.  ,  evaluateTime = 0.; //, updateTime=0.
     X.Resize( sNodes.nodeCount[depth+1]-sNodes.nodeCount[depth] );
     if( depth<=_minDepth ) UpSampleCoarserSolution( depth , sNodes , X );
     else
@@ -2444,7 +2444,7 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
     AdjacencySetFunction asf;
     AdjacencyCountFunction acf;
     double systemTime = 0 , solveTime = 0 , memUsage = 0 , evaluateTime = 0 , gTime , sTime;
-    Real myRadius , myRadius2;
+    Real myRadius;// , myRadius2;
 
     if( depth>_minDepth )
     {
@@ -3977,7 +3977,7 @@ template<int Degree>
 void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vector< std::pair< RootInfo , RootInfo > >& edges )
 {
     TreeOctNode* temp;
-    int count=0 , tris=0;
+    int count=0;// , tris=0;
     int isoTri[ DIMENSION * MarchingCubes::MAX_TRIANGLES ];
     FaceEdgesFunction fef;
     int ref , fIndex;
