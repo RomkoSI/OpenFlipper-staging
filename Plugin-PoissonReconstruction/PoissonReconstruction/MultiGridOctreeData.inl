@@ -916,7 +916,7 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
     TreeOctNode::NeighborKey3 neighborKey;
     neighborKey.set( maxDepth );
     PointStream< Real >* pointStream;
-    char* ext = GetFileExtension( fileName );
+    char* ext = " ";
     if     ( !strcasecmp( ext , "bnpts" ) ) pointStream = new BinaryPointStream< Real >( fileName );
     else                                    pointStream = new  ASCIIPointStream< Real >( fileName );
     delete[] ext;

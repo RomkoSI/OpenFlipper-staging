@@ -29,7 +29,6 @@
 #include "PoissonReconstruction/MarchingCubes.h"
 #include "PoissonReconstruction/Octree.h"
 #include "PoissonReconstruction/SparseMatrix.h"
-#include "PoissonReconstruction/CmdLineParser.h"
 #include "PoissonReconstruction/PPolynomial.h"
 #include "PoissonReconstruction/MemoryUsage.h"
 #include "PoissonReconstruction/MultiGridOctreeData.h"
