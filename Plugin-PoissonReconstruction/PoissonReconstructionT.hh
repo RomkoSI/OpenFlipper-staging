@@ -16,14 +16,15 @@
 
 //== INCLUDES =================================================================
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <float.h>
 #ifdef _WIN32
 #include <Windows.h>
 #include <Psapi.h>
 #endif // _WIN32
+
+#ifdef USE_OPENMP
+#include "omp.h"
+#endif
+
 #include "PoissonReconstruction/Time.h"
 #include "PoissonReconstruction/MarchingCubes.h"
 #include "PoissonReconstruction/Octree.h"
@@ -32,9 +33,7 @@
 #include "PoissonReconstruction/PPolynomial.h"
 #include "PoissonReconstruction/ply.h"
 #include "PoissonReconstruction/MemoryUsage.h"
-#include "omp.h"
 #include "PoissonReconstruction/MultiGridOctreeData.h"
-#include <stdarg.h>
 
 
 //== FORWARDDECLARATIONS ======================================================

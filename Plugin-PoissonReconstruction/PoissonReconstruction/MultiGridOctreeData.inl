@@ -134,13 +134,13 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
                 TreeOctNode* node = treeNodes[i];
                 if( d<maxDepth && node->children ) continue;
                 const TreeOctNode::ConstNeighbors3& neighbors = neighborKey.getNeighbors( node , minDepth );
-                for( int c=0 ; c<Cube::CORNERS ; c++ )	// Iterate over the cell's corners
+                for( unsigned int c=0 ; c<Cube::CORNERS ; c++ )	// Iterate over the cell's corners
                 {
                     bool cornerOwner = true;
                     int x , y , z;
                     int ac = Cube::AntipodalCornerIndex( c ); // The index of the node relative to the corner
                     Cube::FactorCornerIndex( c , x , y , z );
-                    for( int cc=0 ; cc<Cube::CORNERS ; cc++ ) // Iterate over the corner's cells
+                    for( unsigned int cc=0 ; cc<Cube::CORNERS ; cc++ ) // Iterate over the corner's cells
                     {
                         int xx , yy , zz;
                         Cube::FactorCornerIndex( cc , xx , yy , zz );
@@ -167,7 +167,7 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
                         {
                             const TreeOctNode::ConstNeighbors3& neighbors = neighborKey.neighbors[d];
                             // Set all the corner indices at the current depth
-                            for( int cc=0 ; cc<Cube::CORNERS ; cc++ )
+                            for( unsigned int cc=0 ; cc<Cube::CORNERS ; cc++ )
                             {
                                 int xx , yy , zz;
                                 Cube::FactorCornerIndex( cc , xx , yy , zz );
@@ -197,7 +197,7 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
         {
             int start = spans[d].first , end = spans[d].second , width = end - start;
             for( int i=start + (width*t)/threads ; i<start+(width*(t+1))/threads ; i++ )
-                for( int c=0 ; c<Cube::CORNERS ; c++ )
+                for( unsigned int c=0 ; c<Cube::CORNERS ; c++ )
                 {
                     int& idx = cData[ treeNodes[i] ][c];
                     if( idx<0 )
@@ -243,13 +243,13 @@ int SortedTreeNodes::getMaxCornerCount( int depth , int maxDepth , int threads )
             if( d<maxDepth && node->children ) continue;
 
             const TreeOctNode::ConstNeighbors3& neighbors = neighborKey.getNeighbors( node , depth );
-            for( int c=0 ; c<Cube::CORNERS ; c++ )	// Iterate over the cell's corners
+            for( unsigned int c=0 ; c<Cube::CORNERS ; c++ )	// Iterate over the cell's corners
             {
                 bool cornerOwner = true;
                 int x , y , z;
                 int ac = Cube::AntipodalCornerIndex( c ); // The index of the node relative to the corner
                 Cube::FactorCornerIndex( c , x , y , z );
-                for( int cc=0 ; cc<Cube::CORNERS ; cc++ ) // Iterate over the corner's cells
+                for( unsigned int cc=0 ; cc<Cube::CORNERS ; cc++ ) // Iterate over the corner's cells
                 {
                     int xx , yy , zz;
                     Cube::FactorCornerIndex( cc , xx , yy , zz );
@@ -285,7 +285,9 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
 
     int minDepth;
     eData.offsets.resize( this->maxDepth , -1 );
-    int start , end;
+    int start = 0;
+    int end   = 0;
+    
     if( rootNode ) minDepth = rootNode->depth() , start = end = rootNode->nodeData.nodeIndex;
     else
     {
@@ -327,13 +329,13 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
                 TreeOctNode* node = treeNodes[i];
                 const TreeOctNode::ConstNeighbors3& neighbors = neighborKey.getNeighbors( node , minDepth );
 
-                for( int e=0 ; e<Cube::EDGES ; e++ )
+                for( unsigned int e=0 ; e<Cube::EDGES ; e++ )
                 {
                     bool edgeOwner = true;
                     int o , i , j;
                     Cube::FactorEdgeIndex( e , o , i , j );
                     int ac = Square::AntipodalCornerIndex( Square::CornerIndex( i , j ) );
-                    for( int cc=0 ; cc<Square::CORNERS ; cc++ )
+                    for( unsigned int cc=0 ; cc<Square::CORNERS ; cc++ )
                     {
                         int ii , jj , x , y , z;
                         Square::FactorCornerIndex( cc , ii , jj );
@@ -349,9 +351,16 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
                     if( edgeOwner )
                     {
                         // Set all edge indices
-                        for( int cc=0 ; cc<Square::CORNERS ; cc++ )
+                        for( unsigned int cc=0 ; cc<Square::CORNERS ; cc++ )
                         {
-                            int ii , jj , aii , ajj , x , y , z;
+                            int ii  = 0;
+                            int jj  = 0;
+                            int aii = 0;
+                            int ajj = 0;
+                            int x   = 0; 
+                            int y   = 0;
+                            int z   = 0;
+                            
                             Square::FactorCornerIndex( cc , ii , jj );
                             Square::FactorCornerIndex( Square::AntipodalCornerIndex( cc ) , aii , ajj );
                             ii += i , jj += j;
@@ -380,7 +389,7 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
         {
             int start = spans[d].first , end = spans[d].second , width = end - start;
             for( int i=start + (width*t)/threads ; i<start+(width*(t+1))/threads ; i++ )
-                for( int e=0 ; e<Cube::EDGES ; e++ )
+                for( unsigned int e=0 ; e<Cube::EDGES ; e++ )
                 {
                     int& idx = eData[ treeNodes[i] ][e];
                     if( idx<0 ) fprintf( stderr , "[ERROR] Found unindexed edge %d (%d,%d)\n" , idx , minDepth , maxDepth ) , exit( 0 );
@@ -414,15 +423,20 @@ int SortedTreeNodes::getMaxEdgeCount( const TreeOctNode* rootNode , int depth , 
             int d , off[3];
             node->depthAndOffset( d , off );
 
-            for( int e=0 ; e<Cube::EDGES ; e++ )
+            for( unsigned int e=0 ; e<Cube::EDGES ; e++ )
             {
                 bool edgeOwner = true;
                 int o , i , j;
                 Cube::FactorEdgeIndex( e , o , i , j );
                 int ac = Square::AntipodalCornerIndex( Square::CornerIndex( i , j ) );
-                for( int cc=0 ; cc<Square::CORNERS ; cc++ )
+                for( unsigned int cc=0 ; cc<Square::CORNERS ; cc++ )
                 {
-                    int ii , jj , x , y , z;
+                    int ii = 0;
+                    int jj = 0;
+                    int x  = 0;
+                    int y  = 0;
+                    int z  = 0;
+                    
                     Square::FactorCornerIndex( cc , ii , jj );
                     ii += i , jj += j;
                     switch( o )
@@ -1110,7 +1124,8 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
     double pointWeightSum = 0;
     Point3D< Real > min , max , myCenter;
     Real myWidth;
-    int i , cnt=0;
+    int i;
+    unsigned int cnt=0;
     TreeOctNode* temp;
 
     TreeOctNode::NeighborKey3 neighborKey;
@@ -2556,7 +2571,7 @@ int Octree<Degree>::HasNormals(TreeOctNode* node,Real epsilon)
 {
     int hasNormals=0;
     if( node->nodeData.normalIndex>=0 && ( (*normals)[node->nodeData.normalIndex][0]!=0 || (*normals)[node->nodeData.normalIndex][1]!=0 || (*normals)[node->nodeData.normalIndex][2]!=0 ) ) hasNormals=1;
-    if( node->children ) for(int i=0;i<Cube::CORNERS && !hasNormals;i++) hasNormals |= HasNormals(&node->children[i],epsilon);
+    if( node->children ) for(unsigned int i=0;i<Cube::CORNERS && !hasNormals;i++) hasNormals |= HasNormals(&node->children[i],epsilon);
 
     return hasNormals;
 }
@@ -2568,7 +2583,7 @@ void Octree<Degree>::ClipTree( void )
         if( temp->children && temp->d>=_minDepth )
         {
             int hasNormals=0;
-            for( int i=0 ; i<Cube::CORNERS && !hasNormals ; i++ ) hasNormals = HasNormals( &temp->children[i] , EPSILON/(1<<maxDepth) );
+            for( unsigned int i=0 ; i<Cube::CORNERS && !hasNormals ; i++ ) hasNormals = HasNormals( &temp->children[i] , EPSILON/(1<<maxDepth) );
             if( !hasNormals ) temp->children=NULL;
         }
     MemoryUsage();
@@ -3441,7 +3456,9 @@ int Octree<Degree>::IsBoundaryEdge(const TreeOctNode* node,int edgeIndex,int sub
 template<int Degree>
 int Octree<Degree>::IsBoundaryEdge( const TreeOctNode* node , int dir , int x , int y , int subdivideDepth )
 {
-    int d , o[3] , idx1 , idx2 , mask;
+    int d , o[3];
+    int idx1 = 0;
+    int idx2 = 0;
 
     if( subdivideDepth<0 ) return 0;
     if( node->d<=subdivideDepth ) return 1;
@@ -3462,7 +3479,7 @@ int Octree<Degree>::IsBoundaryEdge( const TreeOctNode* node , int dir , int x , 
         idx2 = o[1] + y;
         break;
     }
-    mask = 1<<( int(node->d) - subdivideDepth );
+    int mask = 1<<( int(node->d) - subdivideDepth );
     return !(idx1%(mask)) || !(idx2%(mask));
 }
 template< int Degree >

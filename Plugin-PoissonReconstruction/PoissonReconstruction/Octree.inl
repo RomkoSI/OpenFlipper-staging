@@ -168,8 +168,9 @@ template <class NodeData,class Real>
 int OctNode<NodeData,Real>::maxDepth(void) const{
 	if(!children){return 0;}
 	else{
-		int c,d;
-		for(int i=0;i<Cube::CORNERS;i++){
+		int c=0;
+		int d=0;
+		for(unsigned int i=0;i<Cube::CORNERS;i++){
 			d=children[i].maxDepth();
 			if(!i || d>c){c=d;}
 		}
@@ -181,7 +182,7 @@ int OctNode<NodeData,Real>::nodes(void) const{
 	if(!children){return 1;}
 	else{
 		int c=0;
-		for(int i=0;i<Cube::CORNERS;i++){c+=children[i].nodes();}
+		for(unsigned int i=0;i<Cube::CORNERS;i++){c+=children[i].nodes();}
 		return c+1;
 	}
 }
@@ -190,7 +191,7 @@ int OctNode<NodeData,Real>::leaves(void) const{
 	if(!children){return 1;}
 	else{
 		int c=0;
-		for(int i=0;i<Cube::CORNERS;i++){c+=children[i].leaves();}
+		for(unsigned int i=0;i<Cube::CORNERS;i++){c+=children[i].leaves();}
 		return c;
 	}
 }
@@ -200,7 +201,7 @@ int OctNode<NodeData,Real>::maxDepthLeaves(int maxDepth) const{
 	if(!children){return 1;}
 	else{
 		int c=0;
-		for(int i=0;i<Cube::CORNERS;i++){c+=children[i].maxDepthLeaves(maxDepth);}
+		for(unsigned int i=0;i<Cube::CORNERS;i++){c+=children[i].maxDepthLeaves(maxDepth);}
 		return c;
 	}
 }
@@ -700,7 +701,7 @@ const OctNode<NodeData,Real>* OctNode<NodeData,Real>::getNearestLeaf(const Point
 	int nearest;
 	Real temp,dist2;
 	if(!children){return this;}
-	for(int i=0;i<Cube::CORNERS;i++){
+	for(unsigned int i=0;i<Cube::CORNERS;i++){
 		temp=SquareDistance(children[i].center,p);
 		if(!i || temp<dist2){
 			dist2=temp;
@@ -759,7 +760,7 @@ OctNode<NodeData,Real>& OctNode<NodeData,Real>::operator = (const OctNode<NodeDa
 	if(children){delete[] children;}
 	children=NULL;
 
-	depth=node.depth;
+	this->depth=node.depth;
 	for(i=0;i<DIMENSION;i++){this->offset[i] = node.offset[i];}
 	if(node.children){
 		initChildren();
@@ -1862,7 +1863,7 @@ int OctNode<NodeData,Real>::write(const char* fileName) const{
 template <class NodeData,class Real>
 int OctNode<NodeData,Real>::write(FILE* fp) const{
 	fwrite(this,sizeof(OctNode<NodeData,Real>),1,fp);
-	if(children){for(int i=0;i<Cube::CORNERS;i++){children[i].write(fp);}}
+	if(children){for(unsigned int i=0;i<Cube::CORNERS;i++){children[i].write(fp);}}
 	return 1;
 }
 template <class NodeData,class Real>
@@ -1880,7 +1881,7 @@ int OctNode<NodeData,Real>::read(FILE* fp){
 	if(children){
 		children=NULL;
 		initChildren();
-		for(int i=0;i<Cube::CORNERS;i++){
+		for(unsigned int i=0;i<Cube::CORNERS;i++){
 			children[i].read(fp);
 			children[i].parent=this;
 		}
