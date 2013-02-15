@@ -142,15 +142,15 @@ void MinimalAreaTriangulation<Real>::GetTriangulation(const size_t& i,const size
 	if(j+1>=ii)
 		return;
 	ii=midPoint[i*eCount+j];
-	if(ii>=0)
-	{
+	//if(ii>=0)
+	//{
 		tIndex.idx[0] = int( i );
 		tIndex.idx[1] = int( j );
 		tIndex.idx[2] = int( ii );
 		triangles.push_back(tIndex);
 		GetTriangulation(i,ii,vertices,triangles);
 		GetTriangulation(ii,j,vertices,triangles);
-	}
+	//}
 }
 
 template<class Real>
