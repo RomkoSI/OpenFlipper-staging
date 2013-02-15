@@ -49,6 +49,7 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
 #include "PoissonReconstructionT.hh"
 
@@ -108,38 +109,68 @@ void PoissonPlugin::slotPoissonReconstruct(){
   unsigned int n_points = 0;
   std::vector< Real > pt_data;
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
-     TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
 
-     if ( object == 0 ) {
-       emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
-       continue;
-     }
 
-     // Get triangle mesh
-     TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+    if ( o_it->dataType() == DATA_TRIANGLE_MESH) {
 
-     n_points += mesh->n_vertices();
+      TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
 
-     pt_data.reserve( n_points );
-     TriMesh::VertexIter vit = mesh->vertices_begin();
-     for ( ; vit != mesh->vertices_end(); ++vit )
-     {
-       pt_data.push_back( mesh->point( vit )[0] );
-       pt_data.push_back( mesh->point( vit )[1] );
-       pt_data.push_back( mesh->point( vit )[2] );
-       pt_data.push_back( mesh->normal( vit )[0] );
-       pt_data.push_back( mesh->normal( vit )[1] );
-       pt_data.push_back( mesh->normal( vit )[2] );
-     }
+      if ( object == 0 ) {
+        emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
+        continue;
+      }
+
+      // Get triangle mesh
+      TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+
+      n_points += mesh->n_vertices();
+
+      pt_data.reserve( n_points );
+      TriMesh::VertexIter vit = mesh->vertices_begin();
+      for ( ; vit != mesh->vertices_end(); ++vit )
+      {
+        pt_data.push_back( mesh->point( vit )[0] );
+        pt_data.push_back( mesh->point( vit )[1] );
+        pt_data.push_back( mesh->point( vit )[2] );
+        pt_data.push_back( mesh->normal( vit )[0] );
+        pt_data.push_back( mesh->normal( vit )[1] );
+        pt_data.push_back( mesh->normal( vit )[2] );
+      }
+    }
+
+    if ( o_it->dataType() == DATA_POLY_MESH) {
+
+         PolyMeshObject* object = PluginFunctions::polyMeshObject(*o_it);
+
+         if ( object == 0 ) {
+           emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
+           continue;
+         }
+
+         // Get triangle mesh
+         PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
+
+         n_points += mesh->n_vertices();
+
+         pt_data.reserve( n_points );
+         PolyMesh::VertexIter vit = mesh->vertices_begin();
+         for ( ; vit != mesh->vertices_end(); ++vit )
+         {
+           pt_data.push_back( mesh->point( vit )[0] );
+           pt_data.push_back( mesh->point( vit )[1] );
+           pt_data.push_back( mesh->point( vit )[2] );
+           pt_data.push_back( mesh->normal( vit )[0] );
+           pt_data.push_back( mesh->normal( vit )[1] );
+           pt_data.push_back( mesh->normal( vit )[2] );
+         }
+       }
 
   }
 
   // Get triangle mesh
   TriMesh* final_mesh = NULL;
-
-
 
   ACG::PoissonReconstructionT<TriMesh> pr;
 

@@ -210,7 +210,7 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
                         if( rootNode )
                             printf( "(%d [%d %d %d) <-> (%d [%d %d %d])\n" , minDepth , off[0] , off[1] , off[2] , _d , _off[0] , _off[1] , _off[2] );
                         else
-                            printf( "NULL <-> (%d [%d %d %d])\n" , minDepth , off[0] , off[1] , off[2] , _d , _off[0] , _off[1] , _off[2] );
+                          std::cerr << "NULL <-> ( " << minDepth << " [ " << off[0] << " " << off[1] << " " << off[2] << " ]) " << _d  << std::endl;
                         printf( "[%d %d]\n" , spans[d].first , spans[d].second );
                         exit( 0 );
                     }
