@@ -746,7 +746,6 @@ Real Octree< Degree >::SplatOrientedPoint( const Point3D<Real>& position , const
     double dx;
     Point3D<Real> n;
     TreeOctNode* temp;
-    int cnt=0;
     double width;
     Point3D< Real > myCenter;
     Real myWidth;
@@ -932,15 +931,15 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
     TreeOctNode::NeighborKey3 neighborKey;
     neighborKey.set( maxDepth );
     PointStream< Real >* pointStream;
-    char* ext = " ";
-    if     ( !strcasecmp( ext , "bnpts" ) ) pointStream = new BinaryPointStream< Real >( fileName );
-    else                                    pointStream = new  ASCIIPointStream< Real >( fileName );
-    delete[] ext;
+
+    const char ext[] = "  ";
+    if     ( !strcasecmp( &ext[0] , "bnpts" ) ) pointStream = new BinaryPointStream< Real >( fileName );
+    else                                        pointStream = new  ASCIIPointStream< Real >( fileName );
 
     tree.setFullDepth( _minDepth );
     // Read through once to get the center and scale
     {
-        double t = Time();
+        //double t = Time();
         Point3D< Real > p , n;
         while( pointStream->nextPoint( p , n ) )
         {
@@ -2521,7 +2520,7 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
 
     myRadius = 2*radius-Real(0.5);
     myRadius = int(myRadius-ROUND_EPS)+ROUND_EPS;
-    myRadius2 = Real(radius+ROUND_EPS-0.5);
+//    myRadius2 = Real(radius+ROUND_EPS-0.5);
     d = depth-startingDepth;
     if( _boundaryType==0 ) d++;
     std::vector< int > subDimension( sNodes.nodeCount[d+1]-sNodes.nodeCount[d] );
@@ -4209,7 +4208,7 @@ int Octree< Degree >::GetEdgeLoops( std::vector< std::pair< RootInfo , RootInfo 
     std::pair< RootInfo , RootInfo > e , temp;
     loops.clear();
 
-    while( edges.size() )
+    while( !edges.empty() )
     {
         std::vector< std::pair< RootInfo ,  RootInfo > > front , back;
         e = edges[0];

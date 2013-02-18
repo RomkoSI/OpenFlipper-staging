@@ -76,7 +76,7 @@ public:
 	  * again, so after this method has been called, assumptions about the state of the values
 	  * in memory are no longer valid. */
 	void rollBack(void){
-		if(memory.size()){
+		if( !memory.empty() ){
 			for(size_t i=0;i<memory.size();i++){
 				for(int j=0;j<blockSize;j++){
 					memory[i][j].~T();

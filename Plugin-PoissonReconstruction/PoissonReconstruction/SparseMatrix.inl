@@ -602,7 +602,7 @@ inline void AtomicIncrement( volatile float* ptr , float addend )
 	for( ;; )
 	{
 		_oldValue = _newValue;
-		newValue += addend;
+		//newValue += addend; Commented out as it was useless
 		_newValue = InterlockedCompareExchange( (LONG*) ptr , _newValue , _oldValue );
 		if( _newValue==_oldValue ) break;
 	}
@@ -616,7 +616,7 @@ inline void AtomicIncrement( volatile double* ptr , double addend )
 	do
 	{
 		_oldValue = _newValue;
-		newValue += addend;
+		//newValue += addend;
 		_newValue = InterlockedCompareExchange64( (LONGLONG*) ptr , _newValue , _oldValue );
 	}
 	while( _newValue!=_oldValue );

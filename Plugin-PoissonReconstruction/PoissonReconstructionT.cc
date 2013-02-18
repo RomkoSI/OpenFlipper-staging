@@ -74,7 +74,7 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
     m_parameter = _parameter;
 
     double t;
-    double tt=Time();
+//  double tt=Time();
     Real isoValue = 0;
 
     Octree<2> tree;
@@ -125,6 +125,7 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
     _mesh.clear();
     mesh.resetIterator();
 
+    DumpOutput( "Time for Iso: %f\n" , Time()-t );
 
 
 
@@ -136,8 +137,7 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
 
 
 
-
-    int nr_vertices=int(mesh.outOfCorePointCount()+mesh.inCorePoints.size());
+//    int nr_vertices=int(mesh.outOfCorePointCount()+mesh.inCorePoints.size());
     int nr_faces=mesh.polygonCount();
 
     mesh.resetIterator();
