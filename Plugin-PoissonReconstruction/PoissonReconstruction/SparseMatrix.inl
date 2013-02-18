@@ -48,12 +48,37 @@ SparseMatrix< T >::SparseMatrix( void )
 	m_ppElements = NullPointer< Pointer( MatrixEntry< T > ) >( );
 }
 
-template< class T > SparseMatrix< T >::SparseMatrix( int rows                        ) : SparseMatrix< T >() { Resize( rows ); }
-template< class T > SparseMatrix< T >::SparseMatrix( int rows , int maxEntriesPerRow ) : SparseMatrix< T >() { Resize( rows , maxEntriesPerRow ); }
+template< class T > SparseMatrix< T >::SparseMatrix( int rows                        ) { 
+  _contiguous = false;
+  _maxEntriesPerRow = 0;
+  rows = 0;
+  rowSizes = NullPointer< int >( );
+  m_ppElements = NullPointer< Pointer( MatrixEntry< T > ) >( );
+  Resize( rows ); 
+}
+
+template< class T > SparseMatrix< T >::SparseMatrix( int rows , int maxEntriesPerRow ) { 
+  _contiguous = false;
+  _maxEntriesPerRow = 0;
+  rows = 0;
+  rowSizes = NullPointer< int >( );
+  m_ppElements = NullPointer< Pointer( MatrixEntry< T > ) >( );
+  Resize( rows , maxEntriesPerRow ); 
+}
+
+// Had to rewrite the delegating constructor as we need to support VS2008 for now
+//template< class T > SparseMatrix< T >::SparseMatrix( int rows                        ) : SparseMatrix< T >() { Resize( rows ); }
+//template< class T > SparseMatrix< T >::SparseMatrix( int rows , int maxEntriesPerRow ) : SparseMatrix< T >() { Resize( rows , maxEntriesPerRow ); }
 
 template< class T >
-SparseMatrix< T >::SparseMatrix( const SparseMatrix& M ) : SparseMatrix< T >()
+SparseMatrix< T >::SparseMatrix( const SparseMatrix& M ) 
 {
+  _contiguous = false;
+  _maxEntriesPerRow = 0;
+  rows = 0;
+  rowSizes = NullPointer< int >( );
+  m_ppElements = NullPointer< Pointer( MatrixEntry< T > ) >( );
+  
 	if( M._contiguous ) Resize( M.rows , M._maxEntriesPerRow );
 	else                Resize( M.rows );
 	for( int i=0 ; i<rows ; i++ )
@@ -62,6 +87,7 @@ SparseMatrix< T >::SparseMatrix( const SparseMatrix& M ) : SparseMatrix< T >()
 		memcpy( (*this)[i] , M[i] , sizeof( MatrixEntry< T > ) * rowSizes[i] );
 	}
 }
+
 template<class T>
 int SparseMatrix<T>::Entries( void ) const
 {
