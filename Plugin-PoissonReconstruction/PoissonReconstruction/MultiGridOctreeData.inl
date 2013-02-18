@@ -123,7 +123,9 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
 
     cData.cTable.resize( nodeCount );
     std::vector< int > count( threads );
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::ConstNeighborKey3 neighborKey;
@@ -195,7 +197,10 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
     std::vector< int > offsets( threads+1 );
     offsets[0] = 0;
     for( int t=0 ; t<threads ; t++ ) cData.cCount += count[t] , offsets[t+1] = offsets[t] + count[t];
+    
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
         for( int d=minDepth ; d<=maxDepth ; d++ )
         {
@@ -232,7 +237,9 @@ int SortedTreeNodes::getMaxCornerCount( int depth , int maxDepth , int threads )
     std::vector< std::vector< int > > cornerCount( threads );
     for( int t=0 ; t<threads ; t++ ) cornerCount[t].resize( res*res*res , 0 );
 
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         std::vector< int >& _cornerCount = cornerCount[t];
@@ -318,7 +325,10 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
     }
     eData.eTable.resize( nodeCount );
     std::vector< int > count( threads );
+
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::ConstNeighborKey3 neighborKey;
@@ -392,7 +402,10 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
     std::vector< int > offsets( threads+1 );
     offsets[0] = 0;
     for( int t=0 ; t<threads ; t++ ) eData.eCount += count[t] , offsets[t+1] = offsets[t] + count[t];
+    
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
         for( int d=minDepth ; d<=maxDepth ; d++ )
         {
@@ -418,7 +431,9 @@ int SortedTreeNodes::getMaxEdgeCount( const TreeOctNode* rootNode , int depth , 
     std::vector< std::vector< int > > edgeCount( threads );
     for( int t=0 ; t<threads ; t++ ) edgeCount[t].resize( res*res*res , 0 );
 
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         std::vector< int >& _edgeCount = edgeCount[t];
@@ -1924,7 +1939,9 @@ void Octree< Degree >::UpSampleCoarserSolution( int depth , const SortedTreeNode
     else
     {
         // For every node at the current depth
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads )
+#endif
         for( int t=0 ; t<threads ; t++ )
         {
             TreeOctNode::NeighborKey3 neighborKey;
@@ -1964,7 +1981,9 @@ void Octree< Degree >::UpSampleCoarserSolution( int depth , const SortedTreeNode
     }
     // Clear the coarser solution
     start = sNodes.nodeCount[depth-1] , end = sNodes.nodeCount[depth] , range = end-start;
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=start ; i<end ; i++ ) sNodes.treeNodes[i]->nodeData.solution = Real( 0. );
 }
 template< int Degree >
@@ -1975,7 +1994,9 @@ void Octree< Degree >::DownSampleFinerConstraints( int depth , SortedTreeNodes& 
     else if( _boundaryType== 1 ) cornerValue = 1.00;
     else                         cornerValue = 0.75;
     if( !depth ) return;
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=sNodes.nodeCount[depth-1] ; i<sNodes.nodeCount[depth] ; i++ )
         sNodes.treeNodes[i]->nodeData.constraint = Real( 0 );
 
@@ -1990,7 +2011,9 @@ void Octree< Degree >::DownSampleFinerConstraints( int depth , SortedTreeNodes& 
     int start = sNodes.nodeCount[depth] , end = sNodes.nodeCount[depth+1] , range = end-start;
     int lStart = sNodes.nodeCount[depth-1] , lEnd = sNodes.nodeCount[depth];
     // For every node at the current depth
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::NeighborKey3 neighborKey;
@@ -2028,7 +2051,9 @@ void Octree< Degree >::DownSampleFinerConstraints( int depth , SortedTreeNodes& 
             }
         }
     }
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=lStart ; i<lEnd ; i++ )
     {
         Real cSum = Real(0.);
@@ -2049,7 +2074,9 @@ void Octree< Degree >::DownSample( int depth , const SortedTreeNodes& sNodes , C
     for( int t=0 ; t<threads ; t++ ) _constraints[t].Resize( sNodes.nodeCount[depth] - sNodes.nodeCount[depth-1] );
     int start = sNodes.nodeCount[depth] , end = sNodes.nodeCount[depth+1] , range = end-start , lStart = sNodes.nodeCount[depth-1] , lEnd = sNodes.nodeCount[depth];
     // For every node at the current depth
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::NeighborKey3 neighborKey;
@@ -2087,7 +2114,9 @@ void Octree< Degree >::DownSample( int depth , const SortedTreeNodes& sNodes , C
             }
         }
     }
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=lStart ; i<lEnd ; i++ )
     {
         C cSum = C(0);
@@ -2107,7 +2136,9 @@ void Octree< Degree >::UpSample( int depth , const SortedTreeNodes& sNodes , C* 
 
     int start = sNodes.nodeCount[depth] , end = sNodes.nodeCount[depth+1] , range = end-start;
     // For every node at the current depth
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::NeighborKey3 neighborKey;
@@ -2156,7 +2187,9 @@ void Octree< Degree >::SetCoarserPointValues( int depth , const SortedTreeNodes&
 {
     int start = sNodes.nodeCount[depth] , end = sNodes.nodeCount[depth+1] , range = end-start;
     // For every node at the current depth
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::NeighborKey3 neighborKey;
@@ -2239,7 +2272,9 @@ int Octree< Degree >::GetFixedDepthLaplacian( SparseSymmetricMatrix< Real >& mat
     Stencil< double , 5 > stencils[2][2][2];
     SetLaplacianStencils( depth , stencils );
     matrix.Resize( range );
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::NeighborKey5 neighborKey5;
@@ -2253,7 +2288,9 @@ int Octree< Degree >::GetFixedDepthLaplacian( SparseSymmetricMatrix< Real >& mat
             int count = insetSupported ? GetMatrixRowSize( neighborKey5.neighbors[depth] ) : 1;
 
             // Allocate memory for the row
+#ifdef USE_OPENMP             
 #pragma omp critical (matrix_set_row_size)
+#endif
             {
                 matrix.SetRowSize( i , count );
             }
@@ -2292,7 +2329,9 @@ int Octree<Degree>::GetRestrictedFixedDepthLaplacian( SparseSymmetricMatrix< Rea
     SetLaplacianStencil( depth , stencil );
     Stencil< double , 5 > stencils[2][2][2];
     SetLaplacianStencils( depth , stencils );
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
     {
         TreeOctNode::NeighborKey5 neighborKey5;
@@ -2315,7 +2354,9 @@ int Octree<Degree>::GetRestrictedFixedDepthLaplacian( SparseSymmetricMatrix< Rea
             int count = insetSupported ? GetMatrixRowSize( neighborKey5.neighbors[depth] , xStart , xEnd , yStart , yEnd , zStart , zEnd ) : 1;
 
             // Allocate memory for the row
+#ifdef USE_OPENMP             
 #pragma omp critical (matrix_set_row_size)
+#endif
             {
                 matrix.SetRowSize( i , count );
             }
@@ -2381,7 +2422,9 @@ int Octree< Degree >::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes&
         UpSample( depth-1 , sNodes , metSolution );
         // Add in the solution from that depth
         if( depth )
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads )
+#endif
             for( int i=_sNodes.nodeCount[depth-1] ; i<_sNodes.nodeCount[depth] ; i++ ) metSolution[i] += _sNodes.treeNodes[i]->nodeData.solution;
     }
     if( _constrainValues )
@@ -2454,7 +2497,9 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
         UpSample( depth-1 , sNodes , metSolution );
         // Add in the solution from that depth
         if( depth )
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads )
+#endif
             for( int i=_sNodes.nodeCount[depth-1] ; i<_sNodes.nodeCount[depth] ; i++ ) metSolution[i] += _sNodes.treeNodes[i]->nodeData.solution;
     }
 
@@ -2528,11 +2573,15 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
         for( j=0 ; j<asf.adjacencyCount ; j++ ) _B[j] = B[ asf.adjacencies[j]-sNodes.nodeCount[depth] ];
 
         _X.Resize( asf.adjacencyCount );
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
         for( j=0 ; j<asf.adjacencyCount ; j++ ) _X[j] = sNodes.treeNodes[ asf.adjacencies[j] ]->nodeData.solution;
         // Get the associated matrix
         GetRestrictedFixedDepthLaplacian( _M , depth , asf.adjacencies , asf.adjacencyCount , sNodes.treeNodes[i] , myRadius , sNodes , metSolution );
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
         for( j=0 ; j<asf.adjacencyCount ; j++ )
         {
             _B[j] += sNodes.treeNodes[asf.adjacencies[j]]->nodeData.constraint;
@@ -2560,7 +2609,9 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
         }
 
         // Update the solution for all nodes in the sub-tree
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads )
+#endif
         for( j=0 ; j<asf.adjacencyCount ; j++ )
         {
             TreeOctNode* temp=sNodes.treeNodes[ asf.adjacencies[j] ];
@@ -2615,7 +2666,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
     std::vector< Real > constraints( _sNodes.nodeCount[maxDepth] , Real(0) );
 
     // Clear the constraints
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=0 ; i<_sNodes.nodeCount[maxDepth+1] ; i++ ) _sNodes.treeNodes[i]->nodeData.constraint = Real( 0. );
 
     for( int d=maxDepth ; d>=(_boundaryType==0?2:0) ; d-- )
@@ -2629,7 +2682,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
         SetDivergenceStencil( d , stencil , false );
         Stencil< Point3D< double > , 5 > stencils[2][2][2];
         SetDivergenceStencils( d , stencils , true );
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads )
+#endif
         for( int t=0 ; t<threads ; t++ )
         {
             TreeOctNode::NeighborKey5 neighborKey5;
@@ -2709,7 +2764,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
                 }
             }
         }
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
         for( int i=0 ; i<sz ; i++ )
         {
             Real cSum = Real(0.);
@@ -2721,7 +2778,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
     std::vector< Point3D< Real > > coefficients( _sNodes.nodeCount[maxDepth] , zeroPoint );
     for( int d=maxDepth-1 ; d>=0 ; d-- )
     {
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
         for( int t=0 ; t<threads ; t++ )
         {
             int start = _sNodes.nodeCount[d] , end = _sNodes.nodeCount[d+1] , range = end-start;
@@ -2743,7 +2802,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
     for( int d=(_boundaryType==0?2:0) ; d<maxDepth ; d++ ) UpSample( d , _sNodes , &coefficients[0] );
 
     // Add the accumulated constraints from all finer depths
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=0 ; i<_sNodes.nodeCount[maxDepth] ; i++ ) _sNodes.treeNodes[i]->nodeData.constraint += constraints[i];
 
     // Compute the contribution from all coarser depths
@@ -2752,7 +2813,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
         int start = _sNodes.nodeCount[d] , end = _sNodes.nodeCount[d+1] , range = end - start;
         Stencil< Point3D< double > , 5 > stencils[2][2][2];
         SetDivergenceStencils( d , stencils , false );
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads )
+#endif
         for( int t=0 ; t<threads ; t++ )
         {
             TreeOctNode::NeighborKey5 neighborKey5;
@@ -2805,7 +2868,9 @@ void Octree<Degree>::SetLaplacianConstraints( void )
     fData.clearDotTables( fData.DV_DOT_FLAG );
 
     // Set the point weights for evaluating the iso-value
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int t=0 ; t<threads ; t++ )
         for( int i=(_sNodes.nodeCount[maxDepth+1]*t)/threads ; i<(_sNodes.nodeCount[maxDepth+1]*(t+1))/threads ; i++ )
         {
@@ -2951,12 +3016,16 @@ void Octree<Degree>::GetMCIsoTriangles( Real isoValue , int subdivideDepth , Cor
     int maxDepth = tree.maxDepth();
 
     std::vector< Real > metSolution( _sNodes.nodeCount[maxDepth] , 0 );
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=_sNodes.nodeCount[_minDepth] ; i<_sNodes.nodeCount[maxDepth] ; i++ ) metSolution[i] = _sNodes.treeNodes[i]->nodeData.solution;
     for( int d=_minDepth ; d<maxDepth ; d++ ) UpSample( d , _sNodes , &metSolution[0] );
 
     // Clear the marching cube indices
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads )
+#endif
     for( int i=0 ; i<_sNodes.nodeCount[maxDepth+1] ; i++ ) _sNodes.treeNodes[i]->nodeData.mcIndex = 0;
 
     rootData.boundaryValues = new hash_map< long long , std::pair< Real , Point3D< Real > > >();
@@ -3008,7 +3077,9 @@ void Octree<Degree>::GetMCIsoTriangles( Real isoValue , int subdivideDepth , Cor
             SetEvaluationStencils( d , stencil1 , stencil2 );
 
             // First set the corner values and associated marching-cube indices
+#ifdef USE_OPENMP             
 #pragma omp parallel for num_threads( threads )
+#endif
             for( int t=0 ; t<threads ; t++ ) for( int i=(leafNodeCount*t)/threads ; i<(leafNodeCount*(t+1))/threads ; i++ )
             {
                 TreeOctNode* leaf = leafNodes[i];
@@ -3040,7 +3111,9 @@ void Octree<Degree>::GetMCIsoTriangles( Real isoValue , int subdivideDepth , Cor
             // while GetMCIsoTriangles reads from interiorPoints (without locking)
             std::vector< Point3D< Real > > barycenters;
             std::vector< Point3D< Real > >* barycenterPtr = addBarycenter ? & barycenters : NULL;
+#ifdef USE_OPENMP             
 #pragma omp parallel for num_threads( threads )
+#endif
             for( int t=0 ; t<threads ; t++ ) for( int i=(leafNodeCount*t)/threads ; i<(leafNodeCount*(t+1))/threads ; i++ )
             {
                 TreeOctNode* leaf = leafNodes[i];
@@ -3288,7 +3361,9 @@ Real Octree<Degree>::GetIsoValue( void )
     fData.setValueTables( fData.VALUE_FLAG , 0 );
 
     isoValue = weightSum = 0;
+#ifdef USE_OPENMP     
 #pragma omp parallel for num_threads( threads ) reduction( + : isoValue , weightSum )
+#endif
     for( int t=0 ; t<threads ; t++)
     {
         TreeOctNode::ConstNeighborKey3 nKey;
@@ -3349,7 +3424,11 @@ void Octree< Degree >::SetIsoCorners( Real isoValue , TreeOctNode* leaf , Sorted
 #ifdef WIN32
             InterlockedOr( (volatile unsigned long long*)&(parent->nodeData.mcIndex) , mcid );
 #else // !WIN32
+
+#ifdef USE_OPENMP 
 #pragma omp atomic
+#endif
+
             parent->nodeData.mcIndex |= mcid;
 #endif // WIN32
             while( 1 )
@@ -3359,7 +3438,10 @@ void Octree< Degree >::SetIsoCorners( Real isoValue , TreeOctNode* leaf , Sorted
 #ifdef WIN32
                     InterlockedOr( (volatile unsigned long long*)&(parent->parent->nodeData.mcIndex) , mcid );
 #else // !WIN32
+
+#ifdef USE_OPENMP 
 #pragma omp atomic
+#endif
                     parent->parent->nodeData.mcIndex |= mcid;
 #endif // WIN32
                     parent = parent->parent;
@@ -3566,7 +3648,9 @@ int Octree< Degree >::GetRoot( const RootInfo& ri , Real isoValue , TreeOctNode:
         keyValue2.first = rootData.cornerValues[iter2];
         if( isBoundary )
         {
+#ifdef USE_OPENMP         
 #pragma omp critical (normal_hash_access)
+#endif
             {
                 haveKey1 = ( rootData.boundaryValues->find( key1 )!=rootData.boundaryValues->end() );
                 haveKey2 = ( rootData.boundaryValues->find( key2 )!=rootData.boundaryValues->end() );
@@ -3597,7 +3681,9 @@ int Octree< Degree >::GetRoot( const RootInfo& ri , Real isoValue , TreeOctNode:
     {
         if( isBoundary )
         {
+#ifdef USE_OPENMP         
 #pragma omp critical (normal_hash_access)
+#endif
             {
                 if( !haveKey1 ) (*rootData.boundaryValues)[key1] = keyValue1;
                 if( !haveKey2 ) (*rootData.boundaryValues)[key2] = keyValue2;
@@ -3885,7 +3971,9 @@ int Octree< Degree >::SetMCRootPositions( TreeOctNode* node , int sDepth , Real 
             {
                 hash_map< long long , int >::iterator iter , end;
                 // Check if the root has already been set
+#ifdef USE_OPENMP                 
 #pragma omp critical (boundary_roots_hash_access)
+#endif
                 {
                     iter = rootData.boundaryRoots.find( key );
                     end  = rootData.boundaryRoots.end();
@@ -3896,7 +3984,9 @@ int Octree< Degree >::SetMCRootPositions( TreeOctNode* node , int sDepth , Real 
                     GetRoot( ri , isoValue , neighborKey5 , position , rootData , sDepth , metSolution , nonLinearFit );
                     position = position * _scale + _center;
                     // Add the root if it hasn't been added already
+#ifdef USE_OPENMP                     
 #pragma omp critical (boundary_roots_hash_access)
+#endif
                     {
                         iter = rootData.boundaryRoots.find( key );
                         end  = rootData.boundaryRoots.end();
@@ -3918,7 +4008,9 @@ int Octree< Degree >::SetMCRootPositions( TreeOctNode* node , int sDepth , Real 
                     GetRoot( ri , isoValue , neighborKey5 , position , rootData , sDepth , metSolution , nonLinearFit );
                     position = position * _scale + _center;
                     // Add the root if it hasn't been added already
+#ifdef USE_OPENMP                     
 #pragma omp critical (add_point_access)
+#endif
                     {
                         if( !rootData.edgesSet[ nodeEdgeIndex ] )
                         {
@@ -4170,7 +4262,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
             vertices[i].idx    =  edges[i].index;
             vertices[i].inCore = (edges[i].inCore!=0);
         }
+#ifdef USE_OPENMP         
 #pragma omp critical (add_polygon_access)
+#endif
         {
             mesh->addPolygon( vertices );
         }
@@ -4205,7 +4299,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
             }
             c /= Real( edges.size() );
             int cIdx;
+#ifdef USE_OPENMP             
 #pragma omp critical (add_point_access)
+#endif
             {
                 cIdx = mesh->addOutOfCorePoint( c );
                 barycenters->push_back( c );
@@ -4219,7 +4315,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
                 vertices[0].inCore = (edges[i                 ].inCore!=0);
                 vertices[1].inCore = (edges[(i+1)%edges.size()].inCore!=0);
                 vertices[2].inCore = 0;
+#ifdef USE_OPENMP                 
 #pragma omp critical (add_polygon_access)
+#endif
                 {
                     mesh->addPolygon( vertices );
                 }
@@ -4246,7 +4344,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
                     _vertices[j].idx    =  edges[ triangles[i].idx[j] ].index;
                     _vertices[j].inCore = (edges[ triangles[i].idx[j] ].inCore!=0);
                 }
+#ifdef USE_OPENMP                 
 #pragma omp critical (add_polygon_access)
+#endif
                 {
                     mesh->addPolygon( _vertices );
                 }
@@ -4261,7 +4361,9 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
             vertices[i].idx    =  edges[i].index;
             vertices[i].inCore = (edges[i].inCore!=0);
         }
+#ifdef USE_OPENMP         
 #pragma omp critical (add_polygon_access)
+#endif
         mesh->addPolygon( vertices );
     }
     return int(edges.size())-2;

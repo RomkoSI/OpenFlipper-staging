@@ -285,7 +285,9 @@ template<class T>
 template<class T2>
 void SparseMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVector<T2>& Out , int threads ) const
 {
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 	for( int i=0 ; i<rows ; i++ )
 	{
 		T2 temp = T2();
@@ -348,7 +350,9 @@ int SparseMatrix<T>::SolveSymmetric( const SparseMatrix<T>& M , const PoissonVec
         double dDotQ = 0 , alpha = 0;
 		for( int i=0 ; i<d.Dimensions() ; i++ ) dDotQ += d.m_pV[i] * q.m_pV[i];
 		alpha = delta_new / dDotQ;
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<r.Dimensions() ; i++ ) solution.m_pV[i] += d.m_pV[i] * T2( alpha );
 		if( !(ii%50) )
 		{
@@ -357,14 +361,18 @@ int SparseMatrix<T>::SolveSymmetric( const SparseMatrix<T>& M , const PoissonVec
 			r = b - r;
 		}
 		else
+#ifdef USE_OPENMP   
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 			for( int i=0 ; i<r.Dimensions() ; i++ ) r.m_pV[i] = r.m_pV[i] - q.m_pV[i] * T2(alpha);
 
 		double delta_old = delta_new , beta;
 		delta_new = 0;
 		for( int i=0 ; i<r.Dimensions() ; i++ ) delta_new += r.m_pV[i]*r.m_pV[i];
 		beta = delta_new / delta_old;
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<d.Dimensions() ; i++ ) d.m_pV[i] = r.m_pV[i] + d.m_pV[i] * T2( beta );
 	}
 	return ii;
@@ -464,7 +472,9 @@ void SparseSymmetricMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVe
 	if( addDCTerm )
 	{
 		T2 dcTerm = 0;
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) reduction ( + : dcTerm )
+#endif
 		for( int t=0 ; t<threads ; t++ ) 
 		{
 			T2* out = OutScratch[t];
@@ -488,7 +498,9 @@ void SparseSymmetricMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVe
 		dcTerm /= dim;
 		dim = int( Out.Dimensions() );
 		T2* out = &Out[0];
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<dim ; i++ )
 		{
 			T2 _out = dcTerm;
@@ -498,7 +510,9 @@ void SparseSymmetricMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVe
 	}
 	else
 	{
+#ifdef USE_OPENMP 
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int t=0 ; t<threads ; t++ ) 
 		{
 			T2* out = OutScratch[t];
@@ -521,7 +535,9 @@ void SparseSymmetricMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVe
 		}
 		dim = int( Out.Dimensions() );
 		T2* out = &Out[0];
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<dim ; i++ )
 		{
 			T2 _out = T2(0);
@@ -537,10 +553,14 @@ void SparseSymmetricMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVe
 	int dim = In.Dimensions();
 	const T2* in = &In[0];
 	int threads = OutScratch.size();
+#ifdef USE_OPENMP 	
 #pragma omp parallel for num_threads( threads )
+#endif
 	for( int t=0 ; t<threads ; t++ )
 		for( int i=0 ; i<dim ; i++ ) OutScratch[t][i] = T2(0);
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads )
+#endif
 	for( int t=0 ; t<threads ; t++ ) 
 	{
 		T2* out = OutScratch[t];
@@ -560,7 +580,9 @@ void SparseSymmetricMatrix<T>::Multiply( const PoissonVector<T2>& In , PoissonVe
 		}
 	}
 	T2* out = &Out[0];
+#ifdef USE_OPENMP 	
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 	for( int i=0 ; i<Out.Dimensions() ; i++ )
 	{
 		T2& _out = out[i];
@@ -607,7 +629,9 @@ void MultiplyAtomic( const SparseSymmetricMatrix< T >& A , const PoissonVector< 
 	const float* in = &In[0];
 	float* out = &Out[0];
 	if( partition )
+#ifdef USE_OPENMP 	
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int t=0 ; t<threads ; t++ )
 			for( int i=partition[t] ; i<partition[t+1] ; i++ )
 			{
@@ -625,7 +649,9 @@ void MultiplyAtomic( const SparseSymmetricMatrix< T >& A , const PoissonVector< 
 				AtomicIncrement( out+i , out_i );
 			}
 	else
+#ifdef USE_OPENMP 	
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int i=0 ; i<A.rows ; i++ )
 		{
 			const MatrixEntry< T >* temp = A[i];
@@ -650,7 +676,9 @@ void MultiplyAtomic( const SparseSymmetricMatrix< T >& A , const PoissonVector< 
 	double* out = &Out[0];
 
 	if( partition )
+#ifdef USE_OPENMP 	
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int t=0 ; t<threads ; t++ )
 			for( int i=partition[t] ; i<partition[t+1] ; i++ )
 			{
@@ -668,7 +696,9 @@ void MultiplyAtomic( const SparseSymmetricMatrix< T >& A , const PoissonVector< 
 				AtomicIncrement( out+i , out_i );
 			}
 	else
+#ifdef USE_OPENMP 	
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int i=0 ; i<A.rows ; i++ )
 		{
 			const MatrixEntry< T >* temp = A[i];
@@ -708,7 +738,9 @@ int SparseSymmetricMatrix< T >::SolveAtomic( const SparseSymmetricMatrix< T >& A
 		int eCount = 0;
 		for( int i=0 ; i<A.rows ; i++ ) eCount += A.rowSizes[i];
 		partition[0] = 0;
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int t=0 ; t<threads ; t++ )
 		{
 			int _eCount = 0;
@@ -729,13 +761,17 @@ int SparseSymmetricMatrix< T >::SolveAtomic( const SparseSymmetricMatrix< T >& A
 		MultiplyAtomic( A , x , temp , threads , &partition[0] );
 		MultiplyAtomic( A , temp , r , threads , &partition[0] );
 		MultiplyAtomic( A , b , temp , threads , &partition[0] );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] = temp[i] - _r[i];
 	}
 	else
 	{
 		MultiplyAtomic( A , x , r , threads , &partition[0] );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] = _b[i] - _r[i];
 	}
 	double delta_new = 0 , delta_0;
@@ -754,25 +790,33 @@ int SparseSymmetricMatrix< T >::SolveAtomic( const SparseSymmetricMatrix< T >& A
         double dDotQ = 0;
 		for( int i=0 ; i<dim ; i++ ) dDotQ += _d[i] * _q[i];
 		T2 alpha = T2( delta_new / dDotQ );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _x[i] += _d[i] * alpha;
 		if( (ii%50)==(50-1) )
 		{
 			r.Resize( dim );
 			if( solveNormal ) MultiplyAtomic( A , x , temp , threads , &partition[0] ) , MultiplyAtomic( A , temp , r , threads , &partition[0] );
 			else              MultiplyAtomic( A , x , r , threads , &partition[0] );
+#ifdef USE_OPENMP 			
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _r[i] = _b[i] - _r[i];
 		}
 		else
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _r[i] -= _q[i] * alpha;
 
 		double delta_old = delta_new;
 		delta_new = 0;
 		for( size_t i=0 ; i<dim ; i++ ) delta_new += _r[i] * _r[i];
 		T2 beta = T2( delta_new / delta_old );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) schedule( static )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] + _d[i] * beta;
 	}
 	return ii;
@@ -795,13 +839,17 @@ int SparseSymmetricMatrix< T >::Solve( const SparseSymmetricMatrix<T>& A , const
 	if( solveNormal )
 	{
 		A.Multiply( x , temp , scratch , addDCTerm ) , A.Multiply( temp , r , scratch , addDCTerm ) , A.Multiply( b , temp , scratch , addDCTerm );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) reduction( + : delta_new )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] = temp[i] - _r[i] , delta_new += _r[i] * _r[i];
 	}
 	else
 	{
 		 A.Multiply( x , r , scratch , addDCTerm );
+#ifdef USE_OPENMP 		 
 #pragma omp parallel for num_threads( threads )  reduction ( + : delta_new )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] = _b[i] - _r[i] , delta_new += _r[i] * _r[i];
 	}
 	delta_0 = delta_new;
@@ -816,27 +864,37 @@ int SparseSymmetricMatrix< T >::Solve( const SparseSymmetricMatrix<T>& A , const
 		if( solveNormal ) A.Multiply( d , temp , scratch , addDCTerm ) , A.Multiply( temp , q , scratch , addDCTerm );
 		else              A.Multiply( d , q , scratch , addDCTerm );
         double dDotQ = 0;
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads ) reduction( + : dDotQ )
+#endif
 		for( int i=0 ; i<dim ; i++ ) dDotQ += _d[i] * _q[i];
 		T2 alpha = T2( delta_new / dDotQ );
 		double delta_old = delta_new;
 		delta_new = 0;
 		if( (ii%50)==(50-1) )
 		{
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _x[i] += _d[i] * alpha;
 			r.Resize( dim );
 			if( solveNormal ) A.Multiply( x , temp , scratch , addDCTerm ) , A.Multiply( temp , r , scratch , addDCTerm );
 			else              A.Multiply( x , r , scratch , addDCTerm );
+#ifdef USE_OPENMP 			
 #pragma omp parallel for num_threads( threads ) reduction( + : delta_new )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _r[i] = _b[i] - _r[i] , delta_new += _r[i] * _r[i] , _x[i] += _d[i] * alpha;
 		}
 		else
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) reduction( + : delta_new )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _r[i] -= _q[i] * alpha , delta_new += _r[i] * _r[i] ,  _x[i] += _d[i] * alpha;
 
 		T2 beta = T2( delta_new / delta_old );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] + _d[i] * beta;
 	}
 	return ii;
@@ -863,14 +921,18 @@ int SparseSymmetricMatrix<T>::Solve( const SparseSymmetricMatrix<T>& A , const P
 	{
 		if( threads>1 ) A.Multiply( x , temp , outScratch , addDCTerm ) , A.Multiply( temp , r , outScratch , addDCTerm ) , A.Multiply( b , temp , outScratch , addDCTerm );
 		else            A.Multiply( x , temp , addDCTerm )              , A.Multiply( temp , r , addDCTerm )              , A.Multiply( b , temp , addDCTerm );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) reduction( + : delta_new )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] = temp[i] - _r[i] , delta_new += _r[i] * _r[i];
 	}
 	else
 	{
 		if( threads>1 ) A.Multiply( x , r , outScratch , addDCTerm );
 		else            A.Multiply( x , r , addDCTerm );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) reduction( + : delta_new )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] = _b[i] - _r[i] , delta_new += _r[i] * _r[i];
 	}
 
@@ -894,7 +956,9 @@ int SparseSymmetricMatrix<T>::Solve( const SparseSymmetricMatrix<T>& A , const P
 			else            A.Multiply( d , q , addDCTerm );
 		}
         double dDotQ = 0;
+#ifdef USE_OPENMP         
 #pragma omp parallel for num_threads( threads ) reduction( + : dDotQ )
+#endif
 		for( int i=0 ; i<dim ; i++ ) dDotQ += _d[i] * _q[i];
 		T2 alpha = T2( delta_new / dDotQ );
 		double delta_old = delta_new;
@@ -902,7 +966,9 @@ int SparseSymmetricMatrix<T>::Solve( const SparseSymmetricMatrix<T>& A , const P
 
 		if( (ii%50)==(50-1) )
 		{
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _x[i] += _d[i] * alpha;
 			r.SetZero();
 			if( solveNormal )
@@ -915,17 +981,23 @@ int SparseSymmetricMatrix<T>::Solve( const SparseSymmetricMatrix<T>& A , const P
 				if( threads>1 ) A.Multiply( x , r , outScratch , addDCTerm );
 				else            A.Multiply( x , r , addDCTerm );
 			}
+#ifdef USE_OPENMP 			
 #pragma omp parallel for num_threads( threads ) reduction ( + : delta_new )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _r[i] = _b[i] - _r[i] , delta_new += _r[i] * _r[i] , _x[i] += _d[i] * alpha;
 		}
 		else
 		{
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads ) reduction( + : delta_new )
+#endif
 			for( int i=0 ; i<dim ; i++ ) _r[i] -= _q[i] * alpha , delta_new += _r[i] * _r[i] , _x[i] += _d[i] * alpha;
 		}
 
 		T2 beta = T2( delta_new / delta_old );
+#ifdef USE_OPENMP 		
 #pragma omp parallel for num_threads( threads )
+#endif
 		for( int i=0 ; i<dim ; i++ ) _d[i] = _r[i] + _d[i] * beta;
 	}
 	return ii;
