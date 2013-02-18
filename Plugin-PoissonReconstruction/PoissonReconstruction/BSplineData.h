@@ -33,7 +33,7 @@ DAMAGE.
 #include "PPolynomial.h"
 #include "Array.h"
 
-template< int Degree >
+template< unsigned int Degree >
 struct BSplineElementCoefficients
 {
 	int coeffs[Degree+1];

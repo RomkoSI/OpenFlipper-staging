@@ -26,6 +26,8 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 DAMAGE.
 */
 
+#ifndef DOXY_IGNORE_THIS
+
 #include <float.h>
 #include <stdio.h>
 #include <string.h>
@@ -963,3 +965,5 @@ void SparseSymmetricMatrix< T >::getDiagonal( PoissonVector< T2 >& diagonal ) co
 		for( int j=0 ; j<SparseMatrix< T >::rowSizes[i] ; j++ ) if( SparseMatrix< T >::m_ppElements[i][j].N==i ) diagonal[i] += SparseMatrix< T >::m_ppElements[i][j].Value * 2;
 	}
 }
+
+#endif

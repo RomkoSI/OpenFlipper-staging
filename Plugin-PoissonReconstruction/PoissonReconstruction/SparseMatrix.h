@@ -165,7 +165,9 @@ public:
 	void getDiagonal( PoissonVector< T2 >& diagonal ) const;
 };
 
+#ifndef DOXY_IGNORE_THIS
 #include "SparseMatrix.inl"
+#endif
 
 #endif
 

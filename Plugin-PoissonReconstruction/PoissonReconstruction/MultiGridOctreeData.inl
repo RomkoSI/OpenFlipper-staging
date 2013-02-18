@@ -26,6 +26,8 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 DAMAGE.
 */
 
+#ifndef DOXY_IGNORE_THIS
+
 #include "Octree.h"
 #include "time.h"
 #include "MemoryUsage.h"
@@ -4401,3 +4403,5 @@ long long VertexData::EdgeIndex(const TreeOctNode* node,int eIndex,int maxDepth,
     };
     return (long long)(idx[0]) | (long long)(idx[1])<<15 | (long long)(idx[2])<<30;
 }
+
+#endif

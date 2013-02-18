@@ -26,6 +26,8 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF S
 DAMAGE.
 */
 
+#ifndef DOXY_IGNORE_THIS
+
 #include <stdlib.h>
 #include <math.h>
 #include <algorithm>
@@ -1899,3 +1901,4 @@ void OctNode<NodeData,Real>::centerIndex(int maxDepth,int index[DIMENSION]) cons
 	depthAndOffset(d,o);
 	for(int i=0;i<DIMENSION;i++){index[i]=BinaryNode<Real>::CornerIndex(maxDepth,d+1,o[i]<<1,1);}
 }
+#endif

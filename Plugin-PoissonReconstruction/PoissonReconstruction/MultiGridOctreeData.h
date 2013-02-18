@@ -394,5 +394,7 @@ public:
 	void GetMCIsoTriangles( Real isoValue , int subdivideDepth , CoredMeshData* mesh , int fullDepthIso=0 , int nonLinearFit=1 , bool addBarycenter=false , bool polygonMesh=false );
 };
 
+#ifndef DOXY_IGNORE_THIS
 #include "MultiGridOctreeData.inl"
+#endif
 #endif // MULTI_GRID_OCTREE_DATA_INCLUDED

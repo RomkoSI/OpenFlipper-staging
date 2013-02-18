@@ -267,7 +267,8 @@ public:
 	int width(int maxDepth) const;
 };
 
-
+#ifndef DOXY_IGNORE_THIS
 #include "Octree.inl"
+#endif
 
 #endif // OCT_NODE
