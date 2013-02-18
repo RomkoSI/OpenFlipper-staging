@@ -758,15 +758,15 @@ int OctNode<NodeData,Real>::CornerIndex(const Point3D<Real>& center,const Point3
 template <class NodeData,class Real>
 template<class NodeData2>
 OctNode<NodeData,Real>& OctNode<NodeData,Real>::operator = (const OctNode<NodeData2,Real>& node){
-	int i;
+
 	if(children){delete[] children;}
 	children=NULL;
 
 	this->depth=node.depth;
-	for(i=0;i<DIMENSION;i++){this->offset[i] = node.offset[i];}
+	for(unsigned int i=0;i<DIMENSION;i++){this->offset[i] = node.offset[i];}
 	if(node.children){
 		initChildren();
-		for(i=0;i<Cube::CORNERS;i++){children[i] = node.children[i];}
+		for(unsigned int i=0;i<Cube::CORNERS;i++){children[i] = node.children[i];}
 	}
 	return *this;
 }
