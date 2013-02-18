@@ -142,7 +142,7 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
                     int x , y , z;
                     int ac = Cube::AntipodalCornerIndex( c ); // The index of the node relative to the corner
                     Cube::FactorCornerIndex( c , x , y , z );
-                    for( unsigned int cc=0 ; cc<Cube::CORNERS ; cc++ ) // Iterate over the corner's cells
+                    for( int cc=0 ; cc< int(Cube::CORNERS) ; cc++ ) // Iterate over the corner's cells
                     {
                         int xx , yy , zz;
                         Cube::FactorCornerIndex( cc , xx , yy , zz );
@@ -251,7 +251,7 @@ int SortedTreeNodes::getMaxCornerCount( int depth , int maxDepth , int threads )
                 int x , y , z;
                 int ac = Cube::AntipodalCornerIndex( c ); // The index of the node relative to the corner
                 Cube::FactorCornerIndex( c , x , y , z );
-                for( unsigned int cc=0 ; cc<Cube::CORNERS ; cc++ ) // Iterate over the corner's cells
+                for( int cc=0 ; cc<int(Cube::CORNERS) ; cc++ ) // Iterate over the corner's cells
                 {
                     int xx , yy , zz;
                     Cube::FactorCornerIndex( cc , xx , yy , zz );
@@ -337,7 +337,7 @@ void SortedTreeNodes::setEdgeTable( EdgeTableData& eData , const TreeOctNode* ro
                     int o , i , j;
                     Cube::FactorEdgeIndex( e , o , i , j );
                     int ac = Square::AntipodalCornerIndex( Square::CornerIndex( i , j ) );
-                    for( unsigned int cc=0 ; cc<Square::CORNERS ; cc++ )
+                    for( int cc=0 ; cc<int(Square::CORNERS) ; cc++ )
                     {
                         int ii  = 0;
                         int jj  = 0;
@@ -436,7 +436,7 @@ int SortedTreeNodes::getMaxEdgeCount( const TreeOctNode* rootNode , int depth , 
                 int o , i , j;
                 Cube::FactorEdgeIndex( e , o , i , j );
                 int ac = Square::AntipodalCornerIndex( Square::CornerIndex( i , j ) );
-                for( unsigned int cc=0 ; cc<Square::CORNERS ; cc++ )
+                for( int cc=0 ; cc<int(Square::CORNERS) ; cc++ )
                 {
                     int ii = 0;
                     int jj = 0;
@@ -3795,9 +3795,10 @@ int Octree<Degree>::GetRootIndex( const TreeOctNode* node , int edgeIndex , int 
         Cube::FactorEdgeIndex(finestIndex,o,i1,i2);
         int d,off[3];
         finest->depthAndOffset(d,off);
-        ri.node=finest;
-        ri.edgeIndex=finestIndex;
-        int offset,eIndex[2];
+        ri.node       = finest;
+        ri.edgeIndex  = finestIndex;
+        int offset    = 0;
+        int eIndex[2] = {0,0};
         offset = BinaryNode< Real >::CenterIndex( d , off[o] );
         switch(o)
         {
@@ -3988,7 +3989,7 @@ void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vect
     fef.maxDepth = fData.depth;
     fef.vertexCount = &vertexCount;
     count = MarchingCubes::AddTriangleIndices( node->nodeData.mcIndex , isoTri );
-    for( fIndex=0 ; fIndex<Cube::NEIGHBORS ; fIndex++ )
+    for( fIndex=0 ; fIndex<int(Cube::NEIGHBORS) ; fIndex++ )
     {
         ref = Cube::FaceReflectFaceIndex( fIndex , fIndex );
         fef.fIndex = ref;
@@ -4035,7 +4036,9 @@ void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vect
     for( int i=0 ; i<int(edges.size()) ; i++ )
     {
         iter = vertexCount.find( edges[i].first.key );
-        if( iter==vertexCount.end() ) printf( "Could not find vertex: %lld\n" , edges[i].first );
+        if( iter==vertexCount.end() ) 
+          std::cerr <<  "Could not find vertex! EIndex: " <<  edges[i].first.edgeIndex  << ", Key: " <<  edges[i].first.key <<  std::endl;
+          
         else if( vertexCount[ edges[i].first.key ].second )
         {
             RootInfo ri;
@@ -4057,7 +4060,9 @@ void Octree< Degree >::GetMCIsoEdges( TreeOctNode* node , int sDepth , std::vect
         }
 
         iter = vertexCount.find( edges[i].second.key );
-        if( iter==vertexCount.end() ) printf( "Could not find vertex: %lld\n" , edges[i].second );
+        if( iter==vertexCount.end() ) 
+          std::cerr <<  "Could not find vertex! EIndex: " <<  edges[i].second.edgeIndex  << ", Key: " <<  edges[i].second.key <<  std::endl;
+  
         else if( vertexCount[edges[i].second.key].second )
         {
             RootInfo ri;
