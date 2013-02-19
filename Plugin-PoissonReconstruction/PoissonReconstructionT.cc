@@ -17,53 +17,13 @@ namespace ACG {
 
 //== IMPLEMENTATION ==========================================================
 
-char* outputFile=NULL;
-int echoStdout=0;
 void DumpOutput( const char* format , ... )
 {
-//    if( outputFile )
-//    {
-//        FILE* fp = fopen( outputFile , "a" );
-//        va_list args;
-//        va_start( args , format );
-//        vfprintf( fp , format , args );
-//        fclose( fp );
-//        va_end( args );
-//    }
-//    if( echoStdout )
-//    {
-        va_list args;
-        va_start( args , format );
-        vprintf( format , args );
-        va_end( args );
-//    }
+  va_list args;
+  va_start( args , format );
+  vprintf( format , args );
+  va_end( args );
 }
-
-void DumpOutput2( char* str , const char* format , ... )
-{
-//    if( outputFile )
-//    {
-//        FILE* fp = fopen( outputFile , "a" );
-//        va_list args;
-//        va_start( args , format );
-//        vfprintf( fp , format , args );
-//        fclose( fp );
-//        va_end( args );
-//    }
-//    if( echoStdout )
-//    {
-        va_list args;
-        va_start( args , format );
-        vprintf( format , args );
-        va_end( args );
-//    }
-//    va_list args;
-    va_start( args , format );
-    vsprintf( str , format , args );
-    va_end( args );
-    if( str[strlen(str)-1]=='\n' ) str[strlen(str)-1] = 0;
-}
-
 
 template <class MeshT>
 bool
@@ -73,8 +33,6 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
 
     m_parameter = _parameter;
 
-    double t;
-//  double tt=Time();
     Real isoValue = 0;
 
     Octree<2> tree;
@@ -87,45 +45,42 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
 
     tree.setBSplineData( m_parameter.Depth );
     double maxMemoryUsage;
-    t=Time() , tree.maxMemoryUsage=0;
+    tree.maxMemoryUsage=0;
     XForm4x4< Real > xForm = XForm4x4< Real >::Identity();
     int pointCount = tree.setTreeMemory( _pt_data ,  m_parameter.Depth ,  m_parameter.MinDepth , m_parameter.Depth , Real(m_parameter.SamplesPerNode),
                                          m_parameter.Scale , m_parameter.Confidence , m_parameter.PointWeight , m_parameter.AdaptiveExponent , xForm );
     tree.ClipTree();
     tree.finalize( m_parameter.IsoDivide );
 
-    //    DumpOutput2( comments[commentNum++] , "#             Tree set in: %9.1f (s), %9.1f (MB)\n" , Time()-t , tree.maxMemoryUsage );
     DumpOutput( "Input Points: %d\n" , pointCount );
     DumpOutput( "Leaves/Nodes: %d/%d\n" , tree.tree.leaves() , tree.tree.nodes() );
     DumpOutput( "Memory Usage: %.3f MB\n" , float( MemoryInfo::Usage() )/(1<<20) );
 
     maxMemoryUsage = tree.maxMemoryUsage;
-    t=Time() , tree.maxMemoryUsage=0;
+    tree.maxMemoryUsage=0;
     tree.SetLaplacianConstraints();
-    //    DumpOutput2( comments[commentNum++] , "#      Constraints set in: %9.1f (s), %9.1f (MB)\n" , Time()-t , tree.maxMemoryUsage );
     DumpOutput( "Memory Usage: %.3f MB\n" , float( MemoryInfo::Usage())/(1<<20) );
     maxMemoryUsage = std::max< double >( maxMemoryUsage , tree.maxMemoryUsage );
 
-    t=Time() , tree.maxMemoryUsage=0;
+    tree.maxMemoryUsage=0;
     tree.LaplacianMatrixIteration( m_parameter.SolverDivide, m_parameter.ShowResidual, m_parameter.MinIters, m_parameter.SolverAccuracy, m_parameter.Depth, m_parameter.FixedIters );
-    //    DumpOutput2( comments[commentNum++] , "# Linear system solved in: %9.1f (s), %9.1f (MB)\n" , Time()-t , tree.maxMemoryUsage );
     DumpOutput( "Memory Usage: %.3f MB\n" , float( MemoryInfo::Usage() )/(1<<20) );
     maxMemoryUsage = std::max< double >( maxMemoryUsage , tree.maxMemoryUsage );
 
     CoredFileMeshData mesh;
     if( m_parameter.Verbose ) tree.maxMemoryUsage=0;
-    t=Time();
+    double time=Time();
     isoValue = tree.GetIsoValue();
-    DumpOutput( "Got average in: %f\n" , Time()-t );
+    DumpOutput( "Got average in: %f\n" , Time()-time );
     DumpOutput( "Iso-Value: %e\n" , isoValue );
 
-    t = Time() , tree.maxMemoryUsage = 0;
+    tree.maxMemoryUsage = 0;
     tree.GetMCIsoTriangles( isoValue , m_parameter.IsoDivide , &mesh );
 
     _mesh.clear();
     mesh.resetIterator();
 
-    DumpOutput( "Time for Iso: %f\n" , Time()-t );
+    DumpOutput( "Time for Iso: %f\n" , Time()-time );
 
 
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>445</width>
-    <height>63</height>
+    <height>71</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,15 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="label">
+       <property name="toolTip">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase.</string>
+       </property>
+       <property name="statusTip">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase.</string>
+       </property>
        <property name="text">
         <string>Octree Depth</string>
        </property>
@@ -25,6 +34,15 @@
      </item>
      <item>
       <widget class="QSpinBox" name="depthBox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="statusTip">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase.</string>
+       </property>
        <property name="minimum">
         <number>1</number>
        </property>

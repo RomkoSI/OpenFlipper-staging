@@ -50,6 +50,7 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/SplatCloud/SplatCloud.hh>
 
 #include "PoissonReconstructionT.hh"
 
@@ -103,27 +104,44 @@ void PoissonPlugin::initializePlugin(){
 }
 
 
+void PoissonPlugin::pluginsInitialized()
+{
+  std::cout << "set slot description" << std::endl;
+  emit setSlotDescription("poissonReconstruct(int)",tr("Reconstruct a triangle mesh from the given object."),
+      QStringList(tr("ObjectId")),QStringList(tr("ObjectId of the object")));
+  emit setSlotDescription("poissonReconstruct(IdList)",tr("Reconstruct one triangle mesh from the given objects."),
+      QStringList(tr("IdList")),QStringList(tr("Id of the objects")));
+}
 
-void PoissonPlugin::slotPoissonReconstruct(){
+void PoissonPlugin::poissionReconstruct(int _id)
+{
+  IdList list(1,_id);
+  poissionReconstruct(list);
+}
 
+void PoissonPlugin::poissionReconstruct(IdList _ids)
+{
   unsigned int n_points = 0;
+
+  //datacontainer for the algorithm
+  //holds two 3D vectors in 6 columns, first the position, followed by the normal of the point
   std::vector< Real > pt_data;
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+  //get data from objects
+  for (IdList::iterator idIter = _ids.begin(); idIter != _ids.end(); ++idIter)
+  {
+    BaseObjectData* obj = 0;
+    PluginFunctions::getObject(*idIter,obj);
+    if ( obj == 0 ) {
+      emit log(LOGERR , QString("Unable to get Object width id %1").arg(*idIter));
+      continue;
+    }
 
-
-
-    if ( o_it->dataType() == DATA_TRIANGLE_MESH) {
-
-      TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
-
-      if ( object == 0 ) {
-        emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
-        continue;
-      }
+    //Triangle mesh
+    if ( obj->dataType() == DATA_TRIANGLE_MESH) {
 
       // Get triangle mesh
-      TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+      TriMesh* mesh = PluginFunctions::triMesh(obj);
 
       n_points += mesh->n_vertices();
 
@@ -139,44 +157,50 @@ void PoissonPlugin::slotPoissonReconstruct(){
         pt_data.push_back( mesh->normal( vit )[2] );
       }
     }
+    //Poly mesh
+    else if ( obj->dataType() == DATA_POLY_MESH) {
+      // Get poly mesh
+      PolyMesh* mesh = PluginFunctions::polyMesh(obj);
 
-    if ( o_it->dataType() == DATA_POLY_MESH) {
+      n_points += mesh->n_vertices();
 
-         PolyMeshObject* object = PluginFunctions::polyMeshObject(*o_it);
+      pt_data.reserve( n_points );
+      PolyMesh::VertexIter vit = mesh->vertices_begin();
+      for ( ; vit != mesh->vertices_end(); ++vit )
+      {
+        pt_data.push_back( mesh->point( vit )[0] );
+        pt_data.push_back( mesh->point( vit )[1] );
+        pt_data.push_back( mesh->point( vit )[2] );
+        pt_data.push_back( mesh->normal( vit )[0] );
+        pt_data.push_back( mesh->normal( vit )[1] );
+        pt_data.push_back( mesh->normal( vit )[2] );
+      }
+    }
+    //Splat cloud
+    else if( obj->dataType() == DATA_SPLATCLOUD)
+    {
+      // Get poly mesh
+      SplatCloud* cloud = PluginFunctions::splatCloud(obj);
 
-         if ( object == 0 ) {
-           emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
-           continue;
-         }
+      n_points += cloud->numSplats();
 
-         // Get triangle mesh
-         PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
-
-         n_points += mesh->n_vertices();
-
-         pt_data.reserve( n_points );
-         PolyMesh::VertexIter vit = mesh->vertices_begin();
-         for ( ; vit != mesh->vertices_end(); ++vit )
-         {
-           pt_data.push_back( mesh->point( vit )[0] );
-           pt_data.push_back( mesh->point( vit )[1] );
-           pt_data.push_back( mesh->point( vit )[2] );
-           pt_data.push_back( mesh->normal( vit )[0] );
-           pt_data.push_back( mesh->normal( vit )[1] );
-           pt_data.push_back( mesh->normal( vit )[2] );
-         }
-       }
-
+      pt_data.reserve( n_points );
+      for (unsigned i = 0 ; i < cloud->numSplats(); ++i )
+      {
+        pt_data.push_back( cloud->positions( i )[0] );
+        pt_data.push_back( cloud->positions( i )[1] );
+        pt_data.push_back( cloud->positions( i )[2] );
+        pt_data.push_back( cloud->normals( i )[0] );
+        pt_data.push_back( cloud->normals( i )[1] );
+        pt_data.push_back( cloud->normals( i )[2] );
+      }
+    }
+    else
+      emit log(LOGERR,QString("ObjectType of Object with id %1 is unsupported").arg(*idIter));
   }
 
-  // Get triangle mesh
-  TriMesh* final_mesh = NULL;
 
-  ACG::PoissonReconstructionT<TriMesh> pr;
-
-  ACG::PoissonReconstructionT<TriMesh>::Parameter params;
-  params.Depth = tool_->depthBox->value();
-
+  //create and reconstruct mesh
   if ( !pt_data.empty() ) {
 
     // Add empty triangle mesh
@@ -185,20 +209,39 @@ void PoissonPlugin::slotPoissonReconstruct(){
 
     TriMeshObject* finalObject = PluginFunctions::triMeshObject(meshId);
 
+    // Get triangle mesh
+    TriMesh* final_mesh = NULL;
+
     PluginFunctions::getMesh(meshId,final_mesh);
+
+    //Reconstruct
+    ACG::PoissonReconstructionT<TriMesh> pr;
+
+    ACG::PoissonReconstructionT<TriMesh>::Parameter params;
+    params.Depth = tool_->depthBox->value();
 
     if ( pr.run( pt_data, *final_mesh, params ) ) {
       emit log(LOGINFO,"Reconstruction succeeded");
       emit updatedObject(meshId,UPDATE_ALL);
       finalObject->setName("Poisson Reconstruction.obj");
-      //finalObject->target(true);
     } else {
       emit log(LOGERR,"Reconstruction failed");
       emit deleteObject( meshId );
     }
 
   }
+}
 
+
+void PoissonPlugin::slotPoissonReconstruct(){
+
+  IdList ids;
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;o_it != PluginFunctions::objectsEnd(); ++o_it)
+  {
+    ids.push_back(o_it->id());
+  }
+
+  poissionReconstruct(ids);
 
 }
 

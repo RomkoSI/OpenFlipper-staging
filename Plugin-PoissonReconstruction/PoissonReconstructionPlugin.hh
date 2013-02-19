@@ -50,10 +50,11 @@
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 
 #include "PoissonToolbox.hh"
 
-class PoissonPlugin : public QObject, BaseInterface, ToolboxInterface, LoadSaveInterface, LoggingInterface,AboutInfoInterface
+class PoissonPlugin : public QObject, BaseInterface, ToolboxInterface, LoadSaveInterface, LoggingInterface, AboutInfoInterface, ScriptInterface
 {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
@@ -61,6 +62,7 @@ Q_INTERFACES(ToolboxInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(LoadSaveInterface)
 Q_INTERFACES(AboutInfoInterface)
+Q_INTERFACES(ScriptInterface)
 
 
   //BaseInterface
@@ -83,12 +85,25 @@ signals:
   //AboutInfoInterface
   void addAboutInfo(QString _text, QString _tabName );
 
+  //ScriptInterface
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                              QStringList _parameters, QStringList _descriptions);
+
 private slots:
 
-  void initializePlugin(); // BaseInterface
+  // BaseInterface
+  void initializePlugin();
+  void pluginsInitialized();
   
-public slots:
+private slots:
+
   void slotPoissonReconstruct();
+
+public slots:
+
+  void poissionReconstruct(int _id);
+
+  void poissionReconstruct(IdList _ids);
 
 public :
   PoissonPlugin();
