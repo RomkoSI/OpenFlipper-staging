@@ -107,24 +107,29 @@ void PoissonPlugin::initializePlugin(){
 void PoissonPlugin::pluginsInitialized()
 {
   std::cout << "set slot description" << std::endl;
-  emit setSlotDescription("poissonReconstruct(int)",tr("Reconstruct a triangle mesh from the given object."),
+  emit setSlotDescription("poissonReconstruct(int,int)",tr("Reconstruct a triangle mesh from the given object."),
+      QStringList(tr("ObjectId;depth").split(';')),QStringList(tr("ObjectId of the object;octree depth").split(';')));
+  emit setSlotDescription("poissonReconstruct(IdList,int)",tr("Reconstruct one triangle mesh from the given objects."),
+      QStringList(tr("IdList;depth").split(';')),QStringList(tr("Id of the objects;octree depth").split(';')));
+
+  emit setSlotDescription("poissonReconstruct(int)",tr("Reconstruct a triangle mesh from the given object. (Octree depth defaults to 7)"),
       QStringList(tr("ObjectId")),QStringList(tr("ObjectId of the object")));
-  emit setSlotDescription("poissonReconstruct(IdList)",tr("Reconstruct one triangle mesh from the given objects."),
+  emit setSlotDescription("poissonReconstruct(IdList)",tr("Reconstruct one triangle mesh from the given objects. (Octree depth defaults to 7)"),
       QStringList(tr("IdList")),QStringList(tr("Id of the objects")));
 }
 
-void PoissonPlugin::poissionReconstruct(int _id)
+void PoissonPlugin::poissonReconstruct(int _id, int _depth)
 {
   IdList list(1,_id);
-  poissionReconstruct(list);
+  poissonReconstruct(list, _depth);
 }
 
-void PoissonPlugin::poissionReconstruct(IdList _ids)
+void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 {
   unsigned int n_points = 0;
 
-  //datacontainer for the algorithm
-  //holds two 3D vectors in 6 columns, first the position, followed by the normal of the point
+  // Data container for the algorithm
+  // holds two 3D vectors in 6 columns, first the position, followed by the normal of the point
   std::vector< Real > pt_data;
 
   //get data from objects
@@ -179,8 +184,14 @@ void PoissonPlugin::poissionReconstruct(IdList _ids)
     //Splat cloud
     else if( obj->dataType() == DATA_SPLATCLOUD)
     {
-      // Get poly mesh
+
+      // Get splat cloud mesh
       SplatCloud* cloud = PluginFunctions::splatCloud(obj);
+
+      if ( ! cloud->hasNormals() ) {
+        emit log(LOGERR,"Splat cloud has no normals. Skipping it");
+        continue;
+      }
 
       n_points += cloud->numSplats();
 
@@ -218,7 +229,7 @@ void PoissonPlugin::poissionReconstruct(IdList _ids)
     ACG::PoissonReconstructionT<TriMesh> pr;
 
     ACG::PoissonReconstructionT<TriMesh>::Parameter params;
-    params.Depth = tool_->depthBox->value();
+    params.Depth = _depth;
 
     if ( pr.run( pt_data, *final_mesh, params ) ) {
       emit log(LOGINFO,"Reconstruction succeeded");
@@ -236,12 +247,14 @@ void PoissonPlugin::poissionReconstruct(IdList _ids)
 void PoissonPlugin::slotPoissonReconstruct(){
 
   IdList ids;
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;o_it != PluginFunctions::objectsEnd(); ++o_it)
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_SPLATCLOUD )) ;o_it != PluginFunctions::objectsEnd(); ++o_it)
   {
     ids.push_back(o_it->id());
   }
 
-  poissionReconstruct(ids);
+  const int depth = tool_->depthBox->value();
+
+  poissonReconstruct(ids,depth);
 
 }
 

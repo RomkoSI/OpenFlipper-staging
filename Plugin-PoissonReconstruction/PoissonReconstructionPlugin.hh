@@ -50,11 +50,10 @@
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
-#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 
 #include "PoissonToolbox.hh"
 
-class PoissonPlugin : public QObject, BaseInterface, ToolboxInterface, LoadSaveInterface, LoggingInterface, AboutInfoInterface, ScriptInterface
+class PoissonPlugin : public QObject, BaseInterface, ToolboxInterface, LoadSaveInterface, LoggingInterface, AboutInfoInterface
 {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
@@ -62,12 +61,13 @@ Q_INTERFACES(ToolboxInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(LoadSaveInterface)
 Q_INTERFACES(AboutInfoInterface)
-Q_INTERFACES(ScriptInterface)
 
+signals:
 
   //BaseInterface
-signals:
   void updateView();
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                          QStringList _parameters, QStringList _descriptions);
 
   //LoggingInterface:
   void log( Logtype _type, QString _message );
@@ -85,9 +85,6 @@ signals:
   //AboutInfoInterface
   void addAboutInfo(QString _text, QString _tabName );
 
-  //ScriptInterface
-  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
-                              QStringList _parameters, QStringList _descriptions);
 
 private slots:
 
@@ -97,13 +94,14 @@ private slots:
   
 private slots:
 
+  /// Button slot iterating over all targets and passing them to the correct functions
   void slotPoissonReconstruct();
 
 public slots:
 
-  void poissionReconstruct(int _id);
+  void poissonReconstruct(int _id, int _depth = 7);
 
-  void poissionReconstruct(IdList _ids);
+  void poissonReconstruct(IdList _ids, int _depth = 7);
 
 public :
   PoissonPlugin();
