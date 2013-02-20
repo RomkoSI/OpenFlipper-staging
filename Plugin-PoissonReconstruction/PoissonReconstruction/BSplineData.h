@@ -36,6 +36,7 @@ DAMAGE.
 template< int Degree >
 struct BSplineElementCoefficients
 {
+  // cppcheck-suppress negativeIndex
   int coeffs[Degree+1];
   BSplineElementCoefficients( void ) { memset( coeffs , 0 , sizeof( int ) * ( Degree+1 ) ); }
   int& operator[]( unsigned int idx ){ if (idx <= Degree) return coeffs[idx]; return coeffs[0];}
