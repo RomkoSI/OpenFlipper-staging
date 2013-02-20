@@ -29,7 +29,7 @@ DAMAGE.
 #ifndef DOXY_IGNORE_THIS
 
 #include "Octree.h"
-#include "time.h"
+#include "Time.h"
 #include "MemoryUsage.h"
 #include "PointStream.h"
 #include "MAT.h"
@@ -140,7 +140,7 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
                 TreeOctNode* node = treeNodes[i];
                 if( d<maxDepth && node->children ) continue;
                 const TreeOctNode::ConstNeighbors3& neighbors = neighborKey.getNeighbors( node , minDepth );
-                for( unsigned int c=0 ; c<Cube::CORNERS ; c++ )	// Iterate over the cell's corners
+                for( unsigned int c=0 ; c<Cube::CORNERS ; c++ ) // Iterate over the cell's corners
                 {
                     bool cornerOwner = true;
                     int x , y , z;
@@ -211,7 +211,7 @@ void SortedTreeNodes::setCornerTable( CornerTableData& cData , const TreeOctNode
                     int& idx = cData[ treeNodes[i] ][c];
                     if( idx<0 )
                     {
-                        fprintf( stderr , "[ERROR] Found unindexed corner nodes[%d][%d] = %d (%d,%d)\n" , treeNodes[i]->nodeData.nodeIndex , c , idx , minDepth , maxDepth );
+                        fprintf( stderr , "[ERROR] Found unindexed corner nodes[%d][%u] = %d (%d,%d)\n" , treeNodes[i]->nodeData.nodeIndex , c , idx , minDepth , maxDepth );
                         int _d , _off[3];
                         treeNodes[i]->depthAndOffset( _d , _off );
                         if( rootNode )
@@ -254,7 +254,7 @@ int SortedTreeNodes::getMaxCornerCount( int depth , int maxDepth , int threads )
             if( d<maxDepth && node->children ) continue;
 
             const TreeOctNode::ConstNeighbors3& neighbors = neighborKey.getNeighbors( node , depth );
-            for( unsigned int c=0 ; c<Cube::CORNERS ; c++ )	// Iterate over the cell's corners
+            for( unsigned int c=0 ; c<Cube::CORNERS ; c++ ) // Iterate over the cell's corners
             {
                 bool cornerOwner = true;
                 int x , y , z;
@@ -521,7 +521,11 @@ Octree<Degree>::Octree(void)
     radius = 0;
     width = 0;
     postDerivativeSmooth = 0;
+    _minDepth = 0;
     _constrainValues = false;
+    _boundaryType = 0;
+    _scale = Real(0);
+    normals = NULL;
 }
 
 template< int Degree >
@@ -626,11 +630,11 @@ Real Octree< Degree >::SplatOrientedPoint( const Point3D<Real>& position , const
         temp=&temp->children[cIndex];
         myWidth/=2;
         if(cIndex&1) myCenter[0] += myWidth/2;
-        else		 myCenter[0] -= myWidth/2;
+        else     myCenter[0] -= myWidth/2;
         if(cIndex&2) myCenter[1] += myWidth/2;
-        else		 myCenter[1] -= myWidth/2;
+        else     myCenter[1] -= myWidth/2;
         if(cIndex&4) myCenter[2] += myWidth/2;
-        else		 myCenter[2] -= myWidth/2;
+        else     myCenter[2] -= myWidth/2;
     }
     Real weight , depth;
     GetSampleDepthAndWeight( temp , position , neighborKey3 , samplesPerNode , depth , weight );
@@ -764,11 +768,11 @@ Real Octree< Degree >::SplatOrientedPoint( const Point3D<Real>& position , const
         temp=&temp->children[cIndex];
         myWidth/=2;
         if(cIndex&1) myCenter[0] += myWidth/2;
-        else		 myCenter[0] -= myWidth/2;
+        else     myCenter[0] -= myWidth/2;
         if(cIndex&2) myCenter[1] += myWidth/2;
-        else		 myCenter[1] -= myWidth/2;
+        else     myCenter[1] -= myWidth/2;
         if(cIndex&4) myCenter[2] += myWidth/2;
-        else		 myCenter[2] -= myWidth/2;
+        else     myCenter[2] -= myWidth/2;
     }
     Real weight , depth;
     GetSampleDepthAndWeight( temp , position , neighborKey , samplesPerNode , depth , weight );
@@ -796,11 +800,11 @@ Real Octree< Degree >::SplatOrientedPoint( const Point3D<Real>& position , const
         temp=&temp->children[cIndex];
         myWidth/=2;
         if(cIndex&1) myCenter[0] += myWidth/2;
-        else		 myCenter[0] -= myWidth/2;
+        else     myCenter[0] -= myWidth/2;
         if(cIndex&2) myCenter[1] += myWidth/2;
-        else		 myCenter[1] -= myWidth/2;
+        else     myCenter[1] -= myWidth/2;
         if(cIndex&4) myCenter[2] += myWidth/2;
-        else		 myCenter[2] -= myWidth/2;
+        else     myCenter[2] -= myWidth/2;
     }
     width = 1.0 / ( 1<<temp->depth() );
     n = normal * weight / Real( pow( width , 3 ) ) * Real( dx );
@@ -1030,11 +1034,11 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
                     temp = &temp->children[cIndex];
                     myWidth /= 2;
                     if(cIndex&1) myCenter[0] += myWidth/2;
-                    else		 myCenter[0] -= myWidth/2;
+                    else     myCenter[0] -= myWidth/2;
                     if(cIndex&2) myCenter[1] += myWidth/2;
-                    else		 myCenter[1] -= myWidth/2;
+                    else     myCenter[1] -= myWidth/2;
                     if(cIndex&4) myCenter[2] += myWidth/2;
-                    else		 myCenter[2] -= myWidth/2;
+                    else     myCenter[2] -= myWidth/2;
                     d++;
                 }
                 pointWeight = GetSampleWeight( temp , p , neighborKey );
@@ -1047,11 +1051,11 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
                 temp=&temp->children[cIndex];
                 myWidth/=2;
                 if(cIndex&1) myCenter[0] += myWidth/2;
-                else		 myCenter[0] -= myWidth/2;
+                else     myCenter[0] -= myWidth/2;
                 if(cIndex&2) myCenter[1] += myWidth/2;
-                else		 myCenter[1] -= myWidth/2;
+                else     myCenter[1] -= myWidth/2;
                 if(cIndex&4) myCenter[2] += myWidth/2;
-                else		 myCenter[2] -= myWidth/2;
+                else     myCenter[2] -= myWidth/2;
                 d++;
             }
             SplatOrientedPoint( temp , p , n , neighborKey );
@@ -1083,11 +1087,11 @@ int Octree<Degree>::setTree( char* fileName , int maxDepth , int minDepth ,
                 temp = &temp->children[cIndex];
                 myWidth /= 2;
                 if( cIndex&1 ) myCenter[0] += myWidth/2;
-                else		   myCenter[0] -= myWidth/2;
+                else       myCenter[0] -= myWidth/2;
                 if( cIndex&2 ) myCenter[1] += myWidth/2;
-                else		   myCenter[1] -= myWidth/2;
+                else       myCenter[1] -= myWidth/2;
                 if( cIndex&4 ) myCenter[2] += myWidth/2;
-                else		   myCenter[2] -= myWidth/2;
+                else       myCenter[2] -= myWidth/2;
                 d++;
             }
         }
@@ -1150,12 +1154,12 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
 
     TreeOctNode::NeighborKey3 neighborKey;
     neighborKey.set( maxDepth );
-    //	PointStream< Real >* pointStream;
-    //	char* ext = GetFileExtension( fileName );
-    //	if     ( !strcasecmp( ext , "bnpts" ) ) pointStream = new BinaryPointStream< Real >( fileName );
-    //	else if( !strcasecmp( ext , "ply"   ) ) pointStream = new    PLYPointStream< Real >( fileName );
-    //	else                                    pointStream = new  ASCIIPointStream< Real >( fileName );
-    //	delete[] ext;
+    //  PointStream< Real >* pointStream;
+    //  char* ext = GetFileExtension( fileName );
+    //  if     ( !strcasecmp( ext , "bnpts" ) ) pointStream = new BinaryPointStream< Real >( fileName );
+    //  else if( !strcasecmp( ext , "ply"   ) ) pointStream = new    PLYPointStream< Real >( fileName );
+    //  else                                    pointStream = new  ASCIIPointStream< Real >( fileName );
+    //  delete[] ext;
 
     tree.setFullDepth( _minDepth );
     // Read through once to get the center and scale
@@ -1164,7 +1168,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
         Point3D< Real > p , n;
 
         while ( cnt < _pts_stream.size()/(2*DIMENSION) )
-            //		while( pointStream->nextPoint( p , n ) )
+            //    while( pointStream->nextPoint( p , n ) )
         {
             for ( int i = 0; i < DIMENSION; ++i )
             {
@@ -1195,7 +1199,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
         cnt = 0;
         Point3D< Real > p , n;
         while ( cnt < _pts_stream.size()/(2*DIMENSION) )
-        //		while( pointStream->nextPoint( p , n ) )
+        //    while( pointStream->nextPoint( p , n ) )
         {
             for ( int i = 0; i < DIMENSION; ++i )
             {
@@ -1273,11 +1277,11 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
                     temp = &temp->children[cIndex];
                     myWidth /= 2;
                     if(cIndex&1) myCenter[0] += myWidth/2;
-                    else		 myCenter[0] -= myWidth/2;
+                    else     myCenter[0] -= myWidth/2;
                     if(cIndex&2) myCenter[1] += myWidth/2;
-                    else		 myCenter[1] -= myWidth/2;
+                    else     myCenter[1] -= myWidth/2;
                     if(cIndex&4) myCenter[2] += myWidth/2;
-                    else		 myCenter[2] -= myWidth/2;
+                    else     myCenter[2] -= myWidth/2;
                     d++;
                 }
                 pointWeight = GetSampleWeight( temp , p , neighborKey );
@@ -1290,11 +1294,11 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
                 temp=&temp->children[cIndex];
                 myWidth/=2;
                 if(cIndex&1) myCenter[0] += myWidth/2;
-                else		 myCenter[0] -= myWidth/2;
+                else     myCenter[0] -= myWidth/2;
                 if(cIndex&2) myCenter[1] += myWidth/2;
-                else		 myCenter[1] -= myWidth/2;
+                else     myCenter[1] -= myWidth/2;
                 if(cIndex&4) myCenter[2] += myWidth/2;
-                else		 myCenter[2] -= myWidth/2;
+                else     myCenter[2] -= myWidth/2;
                 d++;
             }
             SplatOrientedPoint( temp , p , n , neighborKey );
@@ -1326,11 +1330,11 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
                 temp = &temp->children[cIndex];
                 myWidth /= 2;
                 if( cIndex&1 ) myCenter[0] += myWidth/2;
-                else		   myCenter[0] -= myWidth/2;
+                else       myCenter[0] -= myWidth/2;
                 if( cIndex&2 ) myCenter[1] += myWidth/2;
-                else		   myCenter[1] -= myWidth/2;
+                else       myCenter[1] -= myWidth/2;
                 if( cIndex&4 ) myCenter[2] += myWidth/2;
-                else		   myCenter[2] -= myWidth/2;
+                else       myCenter[2] -= myWidth/2;
                 d++;
             }
         }
@@ -2303,10 +2307,10 @@ int Octree< Degree >::GetFixedDepthLaplacian( SparseSymmetricMatrix< Real >& mat
             }
 
             // Offset the constraints using the solution from lower resolutions.
-            int x , y , z , c;
+            int x , y , z;
             if( node->parent )
             {
-                c = int( node - node->parent->children );
+                int c = int( node - node->parent->children );
                 Cube::FactorCornerIndex( c , x , y , z );
             }
             else x = y = z = 0;
@@ -2369,10 +2373,10 @@ int Octree<Degree>::GetRestrictedFixedDepthLaplacian( SparseSymmetricMatrix< Rea
             }
 
             // Adjust the system constraints
-            int x , y , z , c;
+            int x , y , z ;
             if( node->parent )
             {
-                c = int( node - node->parent->children );
+                int c = int( node - node->parent->children );
                 Cube::FactorCornerIndex( c , x , y , z );
             }
             else x = y = z = 0;
@@ -2488,7 +2492,7 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
     AdjacencySetFunction asf;
     AdjacencyCountFunction acf;
     double systemTime = 0 , solveTime = 0 , memUsage = 0 , evaluateTime = 0 , gTime , sTime;
-    Real myRadius, myRadius2;
+    Real myRadius;
 
     if( depth>_minDepth )
     {
@@ -2520,7 +2524,6 @@ int Octree<Degree>::_SolveFixedDepthMatrix( int depth , const SortedTreeNodes& s
 
     myRadius = 2*radius-Real(0.5);
     myRadius = int(myRadius-ROUND_EPS)+ROUND_EPS;
-//    myRadius2 = Real(radius+ROUND_EPS-0.5);
     d = depth-startingDepth;
     if( _boundaryType==0 ) d++;
     std::vector< int > subDimension( sNodes.nodeCount[d+1]-sNodes.nodeCount[d] );
@@ -3113,7 +3116,7 @@ void Octree<Degree>::GetMCIsoTriangles( Real isoValue , int subdivideDepth , Cor
 #ifdef USE_OPENMP             
 #pragma omp parallel for num_threads( threads )
 #endif
-            for( int t=0 ; t<threads ; t++ ) for( int i=(leafNodeCount*t)/threads ; i<(leafNodeCount*(t+1))/threads ; i++ )
+            for( int t=0 ; t<threads ; t++ ) for( int i=(leafNodeCount*t)/threads ; i<(leafNodeCount*(t+1))/threads ; ++i )
             {
                 TreeOctNode* leaf = leafNodes[i];
                 if( _boundaryType!=0 || _IsInset( leaf ) ) GetMCIsoTriangles( leaf , mesh , rootData , interiorPoints , offSet , sDepth , polygonMesh , barycenterPtr );
@@ -3131,7 +3134,7 @@ void Octree<Degree>::GetMCIsoTriangles( Real isoValue , int subdivideDepth , Cor
     DeletePointer( rootData.edgesSet );
     coarseRootData.interiorRoots = NullPointer< int >();
     coarseRootData.boundaryValues = rootData.boundaryValues;
-    for( hash_map< long long , int >::iterator iter=rootData.boundaryRoots.begin() ; iter!=rootData.boundaryRoots.end() ; iter++ )
+    for( hash_map< long long , int >::iterator iter=rootData.boundaryRoots.begin() ; iter!=rootData.boundaryRoots.end() ; ++iter )
         coarseRootData.boundaryRoots[iter->first] = iter->second;
 
     for( int d=sDepth ; d>=0 ; d-- )
@@ -3737,7 +3740,7 @@ int Octree< Degree >::GetRoot( const RootInfo& ri , Real isoValue , TreeOctNode:
             rCount++;
         }
     if( rCount && nonLinearFit ) averageRoot /= rCount;
-    else					     averageRoot  = Real((x0-isoValue)/(x0-x1));
+    else               averageRoot  = Real((x0-isoValue)/(x0-x1));
     if( averageRoot<0 || averageRoot>1 )
     {
         fprintf( stderr , "[WARNING] Bad average root: %f\n" , averageRoot );
@@ -3784,7 +3787,7 @@ int Octree< Degree >::GetRootIndex( const TreeOctNode* node , int edgeIndex , in
     if( finest->children )
     {
         if      ( GetRootIndex( &finest->children[c1] , finestIndex , maxDepth , sDepth , ri ) ) return 1;
-        else if	( GetRootIndex( &finest->children[c2] , finestIndex , maxDepth , sDepth , ri ) ) return 1;
+        else if ( GetRootIndex( &finest->children[c2] , finestIndex , maxDepth , sDepth , ri ) ) return 1;
         else
         {
             fprintf( stderr , "[WARNING] Couldn't find root index with either child\n" );
@@ -4046,11 +4049,10 @@ int Octree< Degree >::SetBoundaryMCRootPositions( int sDepth , Real isoValue , R
                         if( IsBoundaryEdge( node , i , j , k , sDepth ) )
                         {
                             hits++;
-                            long long key;
                             eIndex = Cube::EdgeIndex( i , j , k );
                             if( GetRootIndex( node , eIndex , fData.depth , ri ) )
                             {
-                                key = ri.key;
+                                long long key = ri.key;
                                 if( rootData.boundaryRoots.find(key)==rootData.boundaryRoots.end() )
                                 {
                                     GetRoot( ri , isoValue , position , rootData , sDepth , nonLinearFit );
@@ -4292,8 +4294,8 @@ int Octree<Degree>::AddTriangles( CoredMeshData* mesh , std::vector<CoredPointIn
             for( int i=0 ; i<int(edges.size()) ; i++ )
             {
                 Point3D<Real> p;
-                if(edges[i].inCore)	p =   mesh->inCorePoints[edges[i].index       ];
-                else				p = (*interiorPositions)[edges[i].index-offSet];
+                if(edges[i].inCore) p =   mesh->inCorePoints[edges[i].index       ];
+                else        p = (*interiorPositions)[edges[i].index-offSet];
                 c += p;
             }
             c /= Real( edges.size() );

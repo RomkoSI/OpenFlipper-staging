@@ -29,8 +29,10 @@ DAMAGE.
 #ifndef GEOMETRY_INCLUDED
 #define GEOMETRY_INCLUDED
 
-#include <math.h>
+#include <cmath>
 #include <vector>
+#include <cstdio>
+#include <cstdlib>
 #include "Hash.h"
 
 template<class Real>
@@ -308,11 +310,11 @@ public:
 	{
 		Point3D< float > start , end;
 		float value;
-		Vertex( void ) { ; }
-		Vertex( Point3D< float > s , Point3D< float > e , float v ) { start = s , end = e , value = v; }
-		Vertex( Point3D< float > s , Point3D< float > e , Point3D< float > p )
+		Vertex( void ):value(0.f) { ; }
+		Vertex( Point3D< float > s , Point3D< float > e , float v ):start(s),end(e),value(v) { }
+		Vertex( Point3D< float > s , Point3D< float > e , Point3D< float > p ):
+		  start(s),end(e)
 		{
-			start = s , end = e;
 			// < p , e-s > = < s + v*(e-s) , e-s >
 			// < p , e-s > - < s , e-s > = v || e-s || ^2
 			// v = < p-s , e-s > / || e-s ||^2

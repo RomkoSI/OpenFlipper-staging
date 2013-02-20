@@ -29,64 +29,64 @@ DAMAGE.
 template< class Real >
 ASCIIPointStream< Real >::ASCIIPointStream( const char* fileName )
 {
-	_fp = fopen( fileName , "r" );
-	if( !_fp ) fprintf( stderr , "Failed to open file for reading: %s\n" , fileName ) , exit( 0 );
+  _fp = fopen( fileName , "r" );
+  if( !_fp ) fprintf( stderr , "Failed to open file for reading: %s\n" , fileName ) , exit( 0 );
 }
 template< class Real >
 ASCIIPointStream< Real >::~ASCIIPointStream( void )
 {
-	fclose( _fp );
-	_fp = NULL;
+  fclose( _fp );
+  _fp = NULL;
 }
 template< class Real >
 void ASCIIPointStream< Real >::reset( void ) { fseek( _fp , SEEK_SET , 0 ); }
 template< class Real >
 bool ASCIIPointStream< Real >::nextPoint( Point3D< Real >& p , Point3D< Real >& n )
 {
-	float c[2*DIMENSION];
-	if( fscanf( _fp , " %f %f %f %f %f %f " , &c[0] , &c[1] , &c[2] , &c[3] , &c[4] , &c[5] )!=2*DIMENSION ) return false;
-	p[0] = c[0] , p[1] = c[1] , p[2] = c[2];
-	n[0] = c[3] , n[1] = c[4] , n[2] = c[5];
-	return true;
+  float c[2*DIMENSION];
+  if( fscanf( _fp , " %8f %8f %8f %8f %8f %8f " , &c[0] , &c[1] , &c[2] , &c[3] , &c[4] , &c[5] )!=2*DIMENSION ) return false;
+  p[0] = c[0] , p[1] = c[1] , p[2] = c[2];
+  n[0] = c[3] , n[1] = c[4] , n[2] = c[5];
+  return true;
 }
 template< class Real >
 BinaryPointStream< Real >::BinaryPointStream( const char* fileName )
 {
-	_pointsInBuffer = _currentPointIndex = 0;
-	_fp = fopen( fileName , "rb" );
-	if( !_fp ) fprintf( stderr , "Failed to open file for reading: %s\n" , fileName ) , exit( 0 );
+  _pointsInBuffer = _currentPointIndex = 0;
+  _fp = fopen( fileName , "rb" );
+  if( !_fp ) fprintf( stderr , "Failed to open file for reading: %s\n" , fileName ) , exit( 0 );
 }
 template< class Real >
 BinaryPointStream< Real >::~BinaryPointStream( void )
 {
-	fclose( _fp );
-	_fp = NULL;
+  fclose( _fp );
+  _fp = NULL;
 }
 template< class Real >
 void BinaryPointStream< Real >::reset( void )
 {
-	fseek( _fp , SEEK_SET , 0 );
-	_pointsInBuffer = _currentPointIndex = 0;
+  fseek( _fp , SEEK_SET , 0 );
+  _pointsInBuffer = _currentPointIndex = 0;
 }
 template< class Real >
 bool BinaryPointStream< Real >::nextPoint( Point3D< Real >& p , Point3D< Real >& n )
 {
-	if( _currentPointIndex<_pointsInBuffer )
-	{
-		p[0] = _pointBuffer[ _currentPointIndex*6+0 ];
-		p[1] = _pointBuffer[ _currentPointIndex*6+1 ];
-		p[2] = _pointBuffer[ _currentPointIndex*6+2 ];
-		n[0] = _pointBuffer[ _currentPointIndex*6+3 ];
-		n[1] = _pointBuffer[ _currentPointIndex*6+4 ];
-		n[2] = _pointBuffer[ _currentPointIndex*6+5 ];
-		_currentPointIndex++;
-		return true;
-	}
-	else
-	{
-		_currentPointIndex = 0;
-		_pointsInBuffer = int( fread( _pointBuffer , sizeof( Real ) * 6 , POINT_BUFFER_SIZE , _fp ) );
-		if( !_pointsInBuffer ) return false;
-		else return nextPoint( p , n );
-	}
+  if( _currentPointIndex<_pointsInBuffer )
+  {
+    p[0] = _pointBuffer[ _currentPointIndex*6+0 ];
+    p[1] = _pointBuffer[ _currentPointIndex*6+1 ];
+    p[2] = _pointBuffer[ _currentPointIndex*6+2 ];
+    n[0] = _pointBuffer[ _currentPointIndex*6+3 ];
+    n[1] = _pointBuffer[ _currentPointIndex*6+4 ];
+    n[2] = _pointBuffer[ _currentPointIndex*6+5 ];
+    _currentPointIndex++;
+    return true;
+  }
+  else
+  {
+    _currentPointIndex = 0;
+    _pointsInBuffer = int( fread( _pointBuffer , sizeof( Real ) * 6 , POINT_BUFFER_SIZE , _fp ) );
+    if( !_pointsInBuffer ) return false;
+    else return nextPoint( p , n );
+  }
 }

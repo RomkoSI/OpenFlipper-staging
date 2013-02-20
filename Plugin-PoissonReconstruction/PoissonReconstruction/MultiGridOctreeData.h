@@ -245,7 +245,7 @@ class Octree
 		Point3D< Real > position;
 		Real coarserValue;
 		Real weight;
-		PointData( Point3D< Real > p=Point3D< Real >() , Real w=0 ) { position = p , weight = w , coarserValue = Real(0); }
+		PointData( Point3D< Real > p=Point3D< Real >() , Real w=0 ):position(p),coarserValue(Real(0)),weight(w){}
 	};
 	std::vector< PointData > _points;
 

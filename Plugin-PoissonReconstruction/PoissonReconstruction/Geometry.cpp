@@ -164,6 +164,9 @@ CoredFileMeshData::CoredFileMeshData( void )
 	
 	oocPointFile = new BufferedReadWriteFile();
 	polygonFile = new BufferedReadWriteFile();
+
+	memset(pointFileName,0,sizeof(char)*1024);
+	memset(polygonFileName,0,sizeof(char)*1024);
 }
 CoredFileMeshData::~CoredFileMeshData( void )
 {
