@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin (DIRS PoissonReconstruction)
+openflipper_plugin (DIRS PoissonReconstruction INSTALLDATA Icons )

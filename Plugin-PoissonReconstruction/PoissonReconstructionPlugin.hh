@@ -78,9 +78,7 @@ signals:
   void deleteObject( int _id );
 
   // ToolboxInterface
-  //void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
-
-  void addToolbox( QString  _name  , QWidget* _widget );
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
 
   //AboutInfoInterface
   void addAboutInfo(QString _text, QString _tabName );

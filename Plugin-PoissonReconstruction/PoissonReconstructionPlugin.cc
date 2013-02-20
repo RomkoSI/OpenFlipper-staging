@@ -67,8 +67,8 @@ void PoissonPlugin::initializePlugin(){
   
   connect(tool_->reconstructButton, SIGNAL( clicked() ), this, SLOT( slotPoissonReconstruct() ) );
 
- // toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"slice.png");
-  emit addToolbox( tr("Poisson Reconstruction") , tool_);//, toolIcon_);
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PoissonReconstruction.png");
+  emit addToolbox( tr("Poisson Reconstruction") , tool_, toolIcon_);
 
   QString info =
   "This plugin is based on the code published by Michael Kazhdan and Matthew Bolitho<br>   "
@@ -106,7 +106,6 @@ void PoissonPlugin::initializePlugin(){
 
 void PoissonPlugin::pluginsInitialized()
 {
-  std::cout << "set slot description" << std::endl;
   emit setSlotDescription("poissonReconstruct(int,int)",tr("Reconstruct a triangle mesh from the given object."),
       QStringList(tr("ObjectId;depth").split(';')),QStringList(tr("ObjectId of the object;octree depth").split(';')));
   emit setSlotDescription("poissonReconstruct(IdList,int)",tr("Reconstruct one triangle mesh from the given objects."),
