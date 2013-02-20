@@ -46,7 +46,7 @@
 #include "PoissonReconstructionPlugin.hh"
 #include <iostream>
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
@@ -99,6 +99,11 @@ void PoissonPlugin::initializePlugin(){
   "CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN      "
   "ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH     "
   "DAMAGE.                                                                                 ";
+
+  WhatsThisGenerator whatGen("PoissonReconstruction");
+  tool_->reconstructButton->setWhatsThis(tool_->reconstructButton->toolTip()+whatGen.generateLink());
+  tool_->depthBox->setWhatsThis(tool_->depthBox->toolTip()+whatGen.generateLink("octree"));
+  tool_->label->setWhatsThis(tool_->label->toolTip()+whatGen.generateLink("octree"));
 
   emit addAboutInfo(info,"Poisson Reconstruction Plugin");
 }

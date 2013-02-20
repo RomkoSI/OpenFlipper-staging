@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include "ui_poissontoolbox.hh"
+#include <ui_poissontoolbox.hh>
 #include <QtGui>
 
 class PoissonToolBox : public QWidget, public Ui::PoissonTool
