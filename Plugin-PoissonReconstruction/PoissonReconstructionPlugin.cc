@@ -62,6 +62,9 @@ PoissonPlugin::PoissonPlugin() :
 }
 
 void PoissonPlugin::initializePlugin(){
+
+  if ( ! OpenFlipper::Options::gui())
+      return;
  
   tool_ = new PoissonToolBox();
   
@@ -100,12 +103,12 @@ void PoissonPlugin::initializePlugin(){
   "ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH     "
   "DAMAGE.                                                                                 ";
 
+  emit addAboutInfo(info,"Poisson Reconstruction Plugin");
+
   WhatsThisGenerator whatGen("PoissonReconstruction");
   tool_->reconstructButton->setWhatsThis(tool_->reconstructButton->toolTip()+whatGen.generateLink());
   tool_->depthBox->setWhatsThis(tool_->depthBox->toolTip()+whatGen.generateLink("octree"));
   tool_->label->setWhatsThis(tool_->label->toolTip()+whatGen.generateLink("octree"));
-
-  emit addAboutInfo(info,"Poisson Reconstruction Plugin");
 }
 
 
@@ -249,6 +252,9 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 
 
 void PoissonPlugin::slotPoissonReconstruct(){
+
+  if ( ! OpenFlipper::Options::gui())
+    return;
 
   IdList ids;
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_SPLATCLOUD )) ;o_it != PluginFunctions::objectsEnd(); ++o_it)

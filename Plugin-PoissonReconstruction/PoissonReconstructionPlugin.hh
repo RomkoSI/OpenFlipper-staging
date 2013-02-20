@@ -95,6 +95,9 @@ private slots:
   /// Button slot iterating over all targets and passing them to the correct functions
   void slotPoissonReconstruct();
 
+  // Tell system that this plugin runs without ui
+  void noguiSupported( ) {} ;
+
 public slots:
 
   void poissonReconstruct(int _id, int _depth = 7);
