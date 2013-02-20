@@ -1,0 +1,31 @@
+/** 
+\mainpage Documentation for Poisson Reconstruction Plugin
+
+The Poisson Reconstruction Plugin reconstructs meshes from triangle meshes, poly meshes and splat clouds.
+It uses an implementation based on \ref Ka06 "\b [Ka06]".
+
+
+\li \ref octree
+\li \ref references
+
+For reconstruction, point positions and normals are needed, otherwise the reconstruction will fail.
+
+To reconstruct a triangle mesh from one or several meshes (can be mixed types), set the mesh(es) as target and press the Button \b Reconstruct.
+\note Setting multiple meshes as target, just \c one mesh will be reconstructed according to the positions and normals of all targets.
+
+
+\section octree Octree Depth
+
+The Octree Depth can be seen as a refinement level. Increasing the Octree Depth, will also increase the resolution of the reconstructed
+model (See \ref fig_1 "Figure 1"). Increasing the Octree Depth, will also increase the memory usage exponential. In Detail: \f$O((2^{x})^3)\f$ where \f$x\f$ is the Octree Depth.
+
+\anchor fig_1
+\image html octreeDepth.png "Figure 1: Reconstruction at Octree Depth of 6 (top), 8 (middle), 10 (bottom). Image from: \b [Ka06]" width=1cm
+\n
+
+\section references References
+\n
+\anchor Ka06 
+<b> [Ka06]</b> Michael Kazhdan, Matthew Bolitho, and Hugues Hoppe. 2006. Poisson surface reconstruction. In Proceedings of the fourth Eurographics symposium on Geometry processing (SGP '06). Eurographics Association, Aire-la-Ville, Switzerland, Switzerland, 61-70. 
+
+*/
