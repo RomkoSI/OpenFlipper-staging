@@ -68,7 +68,7 @@ public:
     horizontalFOV_(360),
     verticalFOV_(90),
     topOffset_(45),
-    textureFileName_("Panorama-Aachener-Dom-Chor-6MP.jpg") /// TODO: Remove this!
+    textureFileName_("")
   {
 
   }

@@ -237,8 +237,16 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   if ( updateBuffers_ ) {
 
+    QFileInfo info(dome_.textureFileName());
+
+    QString filename = dome_.textureFileName();
+
+    // Fallback image
+    if ( !info.exists() )
+      filename = OpenFlipper::Options::iconDirStr() + QDir::separator() + "EmptySkyDome.png";
+
     // Test: Load texture image
-    QImage texture(dome_.textureFileName());
+    QImage texture(filename);
 
     GLuint textureId;
 
