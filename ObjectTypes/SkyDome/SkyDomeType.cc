@@ -48,63 +48,62 @@
 //=============================================================================
 
 /**
- * \file SkyDomeType.hh
- * This File contains the required types and typedefs for using SkyDome
+ * \file SkyDomeType.c
+ * This File contains the implementation for SkyDome
  */
 
-#ifndef SKYDOME_TYPE_HH
-#define SKYDOME_TYPE_HH
 
 //== INCLUDES =================================================================
 
-#include <OpenFlipper/common/GlobalDefines.hh>
-#include <QString>
+#include "SkyDomeType.hh"
 
-//== SkyDome Type ===============================================
-
-class DLLEXPORT SkyDome {
-
-public:
-
-  /// Constructor
-  SkyDome();
-
-  /// Defines the texture that will be used
-  QString textureFileName();
-
-  void setTextureFileName(QString _textureFileName);
-
-  void setHorizontalFOV( float _value);
-
-  float horizontalFOV();
-
-  void setVerticalFOV( float _value);
-
-  float verticalFOV();
-
-  void setTopOffset( float _value);
-
-  float topOffset();
-
-private:
-
-  // Angle defining the horizontal field of view of the current Dome
-  float horizontalFOV_;
-
-  // Angle defining the vertical field of view of the current Dome
-  float verticalFOV_;
-
-  // Angle defining the top offset (missing part) of the Dome
-  float topOffset_;
-
-  QString textureFileName_;
+//== SkyDome Implementation ===============================================
 
 
-};
+SkyDome::SkyDome() :
+horizontalFOV_(360),
+verticalFOV_(90),
+topOffset_(45),
+textureFileName_("")
+{
+
+}
+
+/// Defines the texture that will be used
+QString SkyDome::textureFileName() {
+  return textureFileName_;
+}
+
+void SkyDome::setTextureFileName(QString _textureFileName) {
+  textureFileName_ = _textureFileName;
+}
+
+void SkyDome::setHorizontalFOV( float _value) {
+  horizontalFOV_ = _value;
+}
+
+float SkyDome::horizontalFOV() {
+  return horizontalFOV_;
+}
+
+void SkyDome::setVerticalFOV( float _value) {
+  verticalFOV_ = _value;
+}
+
+float SkyDome::verticalFOV() {
+  return verticalFOV_;
+}
+
+void SkyDome::setTopOffset( float _value) {
+  topOffset_ = _value;
+}
+
+float SkyDome::topOffset() {
+  return topOffset_;
+}
 
 
 //== TYPEDEFS FOR SCENEGRAPH ===============================================
    
 //=============================================================================
-#endif //SKYDOME_TYPE_HH
 //=============================================================================
