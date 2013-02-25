@@ -72,8 +72,6 @@ class TypeSkyDomePlugin : public QObject, BaseInterface, LoadSaveInterface, Logg
     void noguiSupported( ) {} ;
 
   public :
-
-
      ~TypeSkyDomePlugin() {};
      TypeSkyDomePlugin();
 
