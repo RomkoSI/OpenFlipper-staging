@@ -62,7 +62,7 @@
 
 //== SkyDome Type ===============================================
 
-class ACGDLLEXPORT SkyDome {
+class DLLEXPORT SkyDome {
 
 public:
   SkyDome() :
