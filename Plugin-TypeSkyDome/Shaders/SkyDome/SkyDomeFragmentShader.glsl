@@ -1,0 +1,9 @@
+void main()
+{
+
+SG_FRAGMENT_BEGIN
+
+SG_FRAGMENT_END
+
+}
+
