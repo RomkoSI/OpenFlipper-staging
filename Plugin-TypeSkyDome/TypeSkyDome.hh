@@ -73,11 +73,12 @@ class TypeSkyDomePlugin : public QObject, BaseInterface, LoadSaveInterface, Logg
 
   public :
 
+
      ~TypeSkyDomePlugin() {};
      TypeSkyDomePlugin();
 
      QString name() { return (QString("TypeSkyDome")); };
-     QString description( ) { return (QString(tr("Register SkyDome type"))); };
+     QString description( ) { return (QString(tr("Register SkyDome data type"))); };
      
      bool registerType();
 
