@@ -162,7 +162,11 @@ void SkyDomeObject::setName( QString _name ) {
 // ===============================================================================
 
 void SkyDomeObject::update(UpdateType _type) {
-  skyDomeNode_->update();
+
+  // Only the texture update is relevant. The other updates
+  // Are uniforms which are required on each draw anyway
+  if (_type.contains(UPDATE_TEXTURE) )
+    skyDomeNode_->update();
 }
 
 // ===============================================================================
@@ -191,7 +195,10 @@ QString SkyDomeObject::getObjectinfo() {
   if ( dataType( DATA_SKYDOME ) )
     output += "Object Contains SkyDome : ";
 
-  output += " Horizontal FOV: ( " + QString::number(skyDome_.horizontalFOV()) + ")";
+  output += " Horizontal FOV: " + QString::number(skyDome_.horizontalFOV());
+  output += " Vertical   FOV: " + QString::number(skyDome_.verticalFOV());
+  output += " Top Cutoff    : " + QString::number(skyDome_.topOffset());
+  output += " Image File    : " + skyDome_.textureFileName();
 
   output += "========================================================================\n";
   return output;

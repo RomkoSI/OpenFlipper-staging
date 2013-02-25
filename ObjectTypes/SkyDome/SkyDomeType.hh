@@ -70,19 +70,20 @@ public:
   SkyDome();
 
   /// Defines the texture that will be used
+  void setTextureFileName(const QString& _textureFileName);
+
+  /// Returns the texture that will be used
   QString textureFileName();
 
-  void setTextureFileName(QString _textureFileName);
-
-  void setHorizontalFOV( float _value);
+  void setHorizontalFOV( const float& _value);
 
   float horizontalFOV();
 
-  void setVerticalFOV( float _value);
+  void setVerticalFOV( const float& _value);
 
   float verticalFOV();
 
-  void setTopOffset( float _value);
+  void setTopOffset( const float& _value);
 
   float topOffset();
 
@@ -98,7 +99,6 @@ private:
   float topOffset_;
 
   QString textureFileName_;
-
 
 };
 

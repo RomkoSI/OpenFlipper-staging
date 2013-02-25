@@ -48,7 +48,7 @@
 //=============================================================================
 
 /**
- * \file SkyDomeType.c
+ * \file SkyDomeType.cc
  * This File contains the implementation for SkyDome
  */
 
@@ -56,6 +56,8 @@
 //== INCLUDES =================================================================
 
 #include "SkyDomeType.hh"
+
+#include <iostream>
 
 //== SkyDome Implementation ===============================================
 
@@ -74,11 +76,11 @@ QString SkyDome::textureFileName() {
   return textureFileName_;
 }
 
-void SkyDome::setTextureFileName(QString _textureFileName) {
+void SkyDome::setTextureFileName(const QString& _textureFileName) {
   textureFileName_ = _textureFileName;
 }
 
-void SkyDome::setHorizontalFOV( float _value) {
+void SkyDome::setHorizontalFOV( const float& _value) {
   horizontalFOV_ = _value;
 }
 
@@ -86,7 +88,7 @@ float SkyDome::horizontalFOV() {
   return horizontalFOV_;
 }
 
-void SkyDome::setVerticalFOV( float _value) {
+void SkyDome::setVerticalFOV( const float& _value) {
   verticalFOV_ = _value;
 }
 
@@ -94,7 +96,7 @@ float SkyDome::verticalFOV() {
   return verticalFOV_;
 }
 
-void SkyDome::setTopOffset( float _value) {
+void SkyDome::setTopOffset( const float& _value) {
   topOffset_ = _value;
 }
 
