@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PanoramaTool</class>
+ <widget class="QWidget" name="PanoramaTool">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>278</width>
+    <height>135</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="statusTip">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.</string>
+       </property>
+       <property name="text">
+        <string>Horizontal FOV</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="hFOV">
+       <property name="toolTip">
+        <string>Horizontal Field of View of the Panorama in Degrees</string>
+       </property>
+       <property name="statusTip">
+        <string>Horizontal Field of View of the Panorama in Degrees</string>
+       </property>
+       <property name="whatsThis">
+        <string>Horizontal Field of View of the Panorama in Degrees</string>
+       </property>
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>360.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="statusTip">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.</string>
+       </property>
+       <property name="text">
+        <string>Vertical FOV</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="vFOV">
+       <property name="toolTip">
+        <string>Vertical Field of View of the Panorama in Degrees</string>
+       </property>
+       <property name="statusTip">
+        <string>Vertical Field of View of the Panorama in Degrees</string>
+       </property>
+       <property name="whatsThis">
+        <string>Vertical Field of View of the Panorama in Degrees</string>
+       </property>
+       <property name="maximum">
+        <double>180.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>90.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="statusTip">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.</string>
+       </property>
+       <property name="whatsThis">
+        <string>Increased Octree Depth results in higher resolution of the recontructed model showing more details but also the memory consumption will increase exponential.</string>
+       </property>
+       <property name="text">
+        <string>Top Cutoff</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="cutOff">
+       <property name="toolTip">
+        <string>Missing part in degree at the top of the Panorama</string>
+       </property>
+       <property name="statusTip">
+        <string>Missing part in degree at the top of the Panorama</string>
+       </property>
+       <property name="whatsThis">
+        <string>Missing part in degree at the top of the Panorama</string>
+       </property>
+       <property name="maximum">
+        <double>180.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>45.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="loadButton">
+     <property name="toolTip">
+      <string>Enable slicing for the current scene</string>
+     </property>
+     <property name="statusTip">
+      <string>Enable slicing for the current scene</string>
+     </property>
+     <property name="text">
+      <string>Load Panorama Image</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+  <zorder>loadButton</zorder>
+  <zorder>hFOV</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget_2</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
