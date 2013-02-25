@@ -106,10 +106,7 @@ void PanoramaControlPlugin::slotLoadImage() {
   domeObject->getSkyDome().setTextureFileName(file);
 
   // Update the object and its buffers
-  emit updatedObject(domeObject->id(), UPDATE_ALL);
-
-  // Force redraw to update uniforms for rendering
-  emit updateView();
+  emit updatedObject(domeObject->id(), UPDATE_TEXTURE);
 }
 
 void PanoramaControlPlugin::slotValuesChanged(double) {
@@ -123,15 +120,13 @@ void PanoramaControlPlugin::slotValuesChanged(double) {
       domeObject->getSkyDome().setVerticalFOV(tool_->vFOV->value() );
       domeObject->getSkyDome().setTopOffset(tool_->cutOff->value() );
 
-      emit updatedObject(o_it->id(), UPDATE_ALL);
-
       // Only first object will be handled for now!
       break;
     }
 
   }
 
-  // Force redraw to update uniforms for rendering
+  // Only update the view, as only uniforms will change here
   emit updateView();
 
 }
