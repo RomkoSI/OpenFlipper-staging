@@ -75,7 +75,7 @@ signals:
   void log( QString _message );
   
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget ); //, QIcon* _icon
+  void addToolbox( QString _name  , QWidget* _widget , QIcon* _icon );
 
   // Load/Save Interface
   void addEmptyObject (DataType _type, int& _id);

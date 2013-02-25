@@ -66,8 +66,9 @@ void PanoramaControlPlugin::initializePlugin(){
 
   connect(tool_->loadButton, SIGNAL( clicked() ), this, SLOT( slotLoadImage() ) );
 
-  //toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PoissonReconstruction.png");
-  emit addToolbox( tr("Panorama Control") , tool_);
+  // Add icon and toolbox
+  QIcon* toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PanoControl.png");
+  emit addToolbox( tr("Panorama Control") , tool_, toolIcon_);
 
 }
 
@@ -132,7 +133,6 @@ void PanoramaControlPlugin::slotValuesChanged(double) {
 
   // Only update the view, as only uniforms will change here
   emit updateView();
-
 }
 
 
