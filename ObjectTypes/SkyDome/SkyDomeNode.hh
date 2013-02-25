@@ -121,6 +121,8 @@ private:
 
     ACG::VertexDeclaration vertexDecl_;
 
+    unsigned int textureId_;
+
     bool updateBuffers_;
 };
 

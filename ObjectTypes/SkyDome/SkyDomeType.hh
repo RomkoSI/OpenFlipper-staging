@@ -57,13 +57,29 @@
 
 //== INCLUDES =================================================================
 
+#include <QString>
+
 //== SkyDome Type ===============================================
 
 class SkyDome {
 
 public:
-  SkyDome() {
+  SkyDome() :
+    horizontalFOV_(360),
+    verticalFOV_(90),
+    topOffset_(45),
+    textureFileName_("Panorama-Aachener-Dom-Chor-6MP.jpg") /// TODO: Remove this!
+  {
 
+  }
+
+  /// Defines the texture that will be used
+  QString textureFileName() {
+    return textureFileName_;
+  }
+
+  void setTextureFileName(QString _textureFileName) {
+    textureFileName_ = _textureFileName;
   }
 
   void setHorizontalFOV( float _value) {
@@ -72,6 +88,22 @@ public:
 
   float horizontalFOV() {
     return horizontalFOV_;
+  }
+
+  void setVerticalFOV( float _value) {
+    verticalFOV_ = _value;
+  }
+
+  float verticalFOV() {
+    return verticalFOV_;
+  }
+
+  void setTopOffset( float _value) {
+    topOffset_ = _value;
+  }
+
+  float topOffset() {
+    return topOffset_;
   }
 
 private:
@@ -84,6 +116,8 @@ private:
 
   // Angle defining the top offset (missing part) of the Dome
   float topOffset_;
+
+  QString textureFileName_;
 
 
 };

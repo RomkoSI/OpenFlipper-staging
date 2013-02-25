@@ -47,6 +47,8 @@
 #include <ObjectTypes/SkyDome/SkyDomeType.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <QGLWidget>
+
 //== IMPLEMENTATION ==========================================================
 
 
@@ -234,7 +236,37 @@ SkyDomeNode::
 getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
 
   if ( updateBuffers_ ) {
-    std::cerr << "Updating buffers! " << std::endl;
+
+    // Test: Load texture image
+    QImage texture(dome_.textureFileName());
+
+    GLuint textureId;
+
+    QImage GL_formatted_image;
+    GL_formatted_image = QGLWidget::convertToGLFormat(texture);
+
+    if( GL_formatted_image.isNull() )
+    {
+      std::cerr << "error GL_formatted_image" << std::endl ;
+    }
+
+    //generate the texture name
+    if ( !textureId_ )
+      glGenTextures(1, &textureId_);
+
+    //bind the texture ID
+    glBindTexture(GL_TEXTURE_2D, textureId_);
+
+    //generate the texture
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, GL_formatted_image.width(),
+                  GL_formatted_image.height(),
+                  0, GL_RGBA, GL_UNSIGNED_BYTE, GL_formatted_image.bits() );
+
+    //texture parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D,0);
 
     updateBuffers_ = false;
   }
@@ -248,27 +280,23 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.debugName = "SkyDome";
   ro.priority = 100;
 
+  ro.texture = textureId_;
+  ro.shaderDesc.textured = true;
+
   // Render with depth test enabled
   ro.depthTest = true;
   ro.blending  = false;
 
-  // Compute a screen aligned quad ( Depth doesn't matter, as we compute depth in shader anyway)
-  ACG::Vec3d bottomLeft ( 10.0                     , 10.0                      , 0.0 );
-  ACG::Vec3d bottomRight( _state.viewport_width()-10.0 , 10.0                      , 0.0 );
-  ACG::Vec3d topLeft    ( 10.0                     , _state.viewport_height() -10.0, 0.0 );
-  ACG::Vec3d topRight   ( _state.viewport_width() -10.0, _state.viewport_height() -10.0, 0.0 );
+  // Compute a screen aligned quad ( Depth doesn't matter, as we compute depth in shader anyway, but we set it to the far plane)
+  ACG::Vec3d bottomLeft ( 0.0                     , 0.0                      , 0.99 );
+  ACG::Vec3d bottomRight( _state.viewport_width() , 0.0                      , 0.99 );
+  ACG::Vec3d topLeft    ( 0.0                     , _state.viewport_height() , 0.99 );
+  ACG::Vec3d topRight   ( _state.viewport_width() , _state.viewport_height() , 0.99 );
 
   ACG::Vec3f unprojectedBottomLeft  = ACG::Vec3f(_state.unproject(bottomLeft));
   ACG::Vec3f unprojectedBottomRight = ACG::Vec3f(_state.unproject(bottomRight));
   ACG::Vec3f unprojectedtopLeft     = ACG::Vec3f(_state.unproject(topLeft));
   ACG::Vec3f unprojectedtopRight    = ACG::Vec3f(_state.unproject(topRight));
-
-//  std::cerr << "unprojectedBottomLeft  " << unprojectedBottomLeft << std::endl;
-//  std::cerr << "unprojectedBottomRight " << unprojectedBottomRight << std::endl;
-//  std::cerr << "unprojectedtopLeft     " << unprojectedtopLeft << std::endl;
-//  std::cerr << "unprojectedtopRight    " << unprojectedtopRight << std::endl;
-//
-//  std::cerr << "==========" << std::endl;
 
   // Array of coordinates for the quad
   float vboData_[4 * 3 * 4 ] = { unprojectedBottomLeft[0]  , unprojectedBottomLeft[1]  , unprojectedBottomLeft[2],
@@ -299,6 +327,10 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
 
   ro.setMaterial(&localMaterial);
   ro.glDrawArrays(GL_QUADS, 0, 4);
+
+  ro.addUniformValue("uUpperCutOff",GL_FLOAT,QVariant(0.1) );
+  ro.addUniformValue("uFOV"        ,GL_FLOAT,QVariant(360) );
+
 
   _renderer->addRenderObject(&ro);
 }
