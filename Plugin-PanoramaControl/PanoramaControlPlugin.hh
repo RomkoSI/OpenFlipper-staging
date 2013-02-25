@@ -68,6 +68,8 @@ signals:
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
 
+  void setRenderer(unsigned int _viewer, QString _rendererName);
+
   //LoggingInterface:
   void log( Logtype _type, QString _message );
   void log( QString _message );

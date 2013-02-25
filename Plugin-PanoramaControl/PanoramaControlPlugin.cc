@@ -107,6 +107,10 @@ void PanoramaControlPlugin::slotLoadImage() {
 
   // Update the object and its buffers
   emit updatedObject(domeObject->id(), UPDATE_TEXTURE);
+
+  // Switch to shader pipeline renderer
+  emit setRenderer(PluginFunctions::activeExaminer(),"Shader Pipeline Renderer Plugin");
+
 }
 
 void PanoramaControlPlugin::slotValuesChanged(double) {
