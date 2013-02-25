@@ -42,53 +42,10 @@
 
 
 #include "SkyDomeNode.hh"
-
-/*===========================================================================*\
- *                                                                           *
- *                              OpenFlipper                                  *
- *      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen      *
- *                           www.openflipper.org                             *
- *                                                                           *
- *---------------------------------------------------------------------------*
- *  This file is part of OpenFlipper.                                        *
- *                                                                           *
- *  OpenFlipper is free software: you can redistribute it and/or modify      *
- *  it under the terms of the GNU Lesser General Public License as           *
- *  published by the Free Software Foundation, either version 3 of           *
- *  the License, or (at your option) any later version with the              *
- *  following exceptions:                                                    *
- *                                                                           *
- *  If other files instantiate templates or use macros                       *
- *  or inline functions from this file, or you compile this file and         *
- *  link it with other files to produce an executable, this file does        *
- *  not by itself cause the resulting executable to be covered by the        *
- *  GNU Lesser General Public License. This exception does not however       *
- *  invalidate any other reasons why the executable file might be            *
- *  covered by the GNU Lesser General Public License.                        *
- *                                                                           *
- *  OpenFlipper is distributed in the hope that it will be useful,           *
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of           *
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            *
- *  GNU Lesser General Public License for more details.                      *
- *                                                                           *
- *  You should have received a copy of the GNU LesserGeneral Public          *
- *  License along with OpenFlipper. If not,                                  *
- *  see <http://www.gnu.org/licenses/>.                                      *
- *                                                                           *
-\*===========================================================================*/
-
-/*===========================================================================*\
- *                                                                           *
- *   $Revision: 15870 $                                                         *
- *   $Author: tenter $                                                      *
- *   $Date: 2012-11-26 13:10:04 +0100 (Mo, 26 Nov 2012) $                   *
- *                                                                           *
-\*===========================================================================*/
-
-#include "SkyDomeNode.hh"
 #include <ACG/GL/gl.hh>
 #include <iostream>
 #include <ObjectTypes/SkyDome/SkyDomeType.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -96,7 +53,8 @@
 SkyDomeNode::SkyDomeNode(SkyDome& _dome, BaseNode *_parent, std::string _name)
 :BaseNode(_parent, _name),
  dome_(_dome),
- vbo_(0)
+ vbo_(0),
+ updateBuffers_(true)
 {
   vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
 }
@@ -275,136 +233,74 @@ void
 SkyDomeNode::
 getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat) {
 
-//  // init base render object
-//  ACG::RenderObject ro;
-//
-//  _state.enable(GL_COLOR_MATERIAL);
-//  _state.disable(GL_LIGHTING);
-//  ro.initFromState(&_state);
-//
-//  // plane_.position represents the center of the plane.
-//  // Compute the corner position
-//  const ACG::Vec3d pos = plane_.position - plane_.xDirection*0.5 - plane_.yDirection*0.5;
-//
-//  // translate to corner position and store that in renderer
-//  _state.push_modelview_matrix();
-//  _state.translate(pos[0], pos[1], pos[2]);
-//  ro.modelview = _state.modelview();
-//  _state.pop_modelview_matrix();
-//
-//
-//  // Render with depth test enabled
-//  ro.depthTest = true;
-//
-//  // Compute the plane normal and outer corner
-//  const ACG::Vec3d xy     =  plane_.xDirection + plane_.yDirection;
-//  const ACG::Vec3d normal = (plane_.xDirection % plane_.yDirection).normalized();
-//
-//  // Array of coordinates for the plane ( duplicated due to front and back rendering )
-//  // Interleaved with normals
-//  float vboData_[8 * 3 * 2 ] = { 0.0,0.0,0.0,
-//                                 (float)normal[0],(float)normal[1],(float)normal[2],
-//                                 (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
-//                                 (float)normal[0],(float)normal[1],(float)normal[2],
-//                                 (float)xy[0],(float)xy[1],(float)xy[2],
-//                                 (float)normal[0],(float)normal[1],(float)normal[2],
-//                                 (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
-//                                 (float)normal[0],(float)normal[1],(float)normal[2],
-//                                 (float)plane_.yDirection[0],(float)plane_.yDirection[1],(float)plane_.yDirection[2],
-//                                 (float)-normal[0],(float)-normal[1],(float)-normal[2],
-//                                 (float)xy[0],(float)xy[1],(float)xy[2],
-//                                 (float)-normal[0],(float)-normal[1],(float)-normal[2],
-//                                 (float)plane_.xDirection[0],(float)plane_.xDirection[1],(float)plane_.xDirection[2],
-//                                 (float)-normal[0],(float)-normal[1],(float)-normal[2],
-//                                 0.0,0.0,0.0,
-//                                 (float)-normal[0],(float)-normal[1],(float)-normal[2]};
-//
-//  // Create buffer for vertex coordinates if necessary
-//  if ( ! vbo_ ) {
-//    glGenBuffersARB(1, &vbo_);
-//  }
-//
-//  // Bind buffer
-//  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
-//
-//  // Upload to buffer ( 4 vertices with 3 coordinates for point and normal of 4 byte sized floats)
-//  glBufferDataARB(GL_ARRAY_BUFFER_ARB, 8 * 3 * 2 * 4, &vboData_[0], GL_STATIC_DRAW_ARB);
-//
-//  // Set the buffers for rendering
-//  ro.vertexBuffer = vbo_;
-//  ro.vertexDecl   = &vertexDecl_;
-//
-//
-//  for (unsigned int i = 0; i < _drawMode.getNumLayers(); ++i)
-//  {
-//    ACG::SceneGraph::Material localMaterial = *_mat;
-//
-//    const ACG::SceneGraph::DrawModes::DrawModeProperties* props = _drawMode.getLayer(i);
-//
-//
-//    ro.setupShaderGenFromDrawmode(props);
-//
-//    switch (props->primitive()) {
-//
-//      case ACG::SceneGraph::DrawModes::PRIMITIVE_POINT:
-//
-//        ro.blending = false;
-//
-//        //---------------------------------------------------
-//        // No lighting!
-//        // Therefore we need some emissive color
-//        //---------------------------------------------------
-//        localMaterial.baseColor( localMaterial.ambientColor() );
-//        ro.setMaterial(&localMaterial);
-//
-//        //---------------------------------------------------
-//        // Simulate glPointSize(12) with a sphere
-//        //---------------------------------------------------
-//
-//        addSphereAt(plane_.xDirection,_renderer,_state,&ro);
-//        addSphereAt(plane_.yDirection,_renderer,_state,&ro);
-//        addSphereAt(xy,_renderer,_state,&ro);
-//        addSphereAt(ACG::Vec3d(0.0,0.0,0.0),_renderer,_state,&ro);
-//
-//
-//        break;
-//      default:
-//
-//        ro.priority  = 10;
-//
-//        // Blending enabled, since we wan't some transparency
-//        ro.blending  = true;
-//        ro.blendSrc  = GL_SRC_ALPHA;
-//        ro.blendDest = GL_ONE_MINUS_SRC_ALPHA;
-//
-//        //---------------------------------------------------
-//        // Just draw the quads here ( front )
-//        //---------------------------------------------------
-//        ro.debugName = "SkyDomeNode.plane_front";
-//        localMaterial.ambientColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
-//        localMaterial.diffuseColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
-//        localMaterial.specularColor(ACG::Vec4f(0.6, 0.15, 0.2, 0.5 ));
-//        ro.setMaterial(&localMaterial);
-//        ro.glDrawArrays(GL_QUADS, 0, 4);
-//        _renderer->addRenderObject(&ro);
-//
-//        //---------------------------------------------------
-//        // Just draw the quads here ( back )
-//        //---------------------------------------------------
-//        ro.debugName = "SkyDomeNode.plane_back";
-//        localMaterial.ambientColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
-//        localMaterial.diffuseColor( ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
-//        localMaterial.specularColor(ACG::Vec4f(0.1, 0.8, 0.2, 0.5 ));
-//        ro.setMaterial(&localMaterial);
-//        ro.glDrawArrays(GL_QUADS, 4, 4);
-//        _renderer->addRenderObject(&ro);
-//
-//        break;
-//    }
-//
-//  }
+  if ( updateBuffers_ ) {
+    std::cerr << "Updating buffers! " << std::endl;
 
+    updateBuffers_ = false;
+  }
 
+  // init base render object
+  ACG::RenderObject ro;
+
+  // We simply take the data from the texture! -> No Lighting
+  _state.disable(GL_LIGHTING);
+  ro.initFromState(&_state);
+  ro.debugName = "SkyDome";
+  ro.priority = 100;
+
+  // Render with depth test enabled
+  ro.depthTest = true;
+  ro.blending  = false;
+
+  // Compute a screen aligned quad ( Depth doesn't matter, as we compute depth in shader anyway)
+  ACG::Vec3d bottomLeft ( 10.0                     , 10.0                      , 0.0 );
+  ACG::Vec3d bottomRight( _state.viewport_width()-10.0 , 10.0                      , 0.0 );
+  ACG::Vec3d topLeft    ( 10.0                     , _state.viewport_height() -10.0, 0.0 );
+  ACG::Vec3d topRight   ( _state.viewport_width() -10.0, _state.viewport_height() -10.0, 0.0 );
+
+  ACG::Vec3f unprojectedBottomLeft  = ACG::Vec3f(_state.unproject(bottomLeft));
+  ACG::Vec3f unprojectedBottomRight = ACG::Vec3f(_state.unproject(bottomRight));
+  ACG::Vec3f unprojectedtopLeft     = ACG::Vec3f(_state.unproject(topLeft));
+  ACG::Vec3f unprojectedtopRight    = ACG::Vec3f(_state.unproject(topRight));
+
+//  std::cerr << "unprojectedBottomLeft  " << unprojectedBottomLeft << std::endl;
+//  std::cerr << "unprojectedBottomRight " << unprojectedBottomRight << std::endl;
+//  std::cerr << "unprojectedtopLeft     " << unprojectedtopLeft << std::endl;
+//  std::cerr << "unprojectedtopRight    " << unprojectedtopRight << std::endl;
+//
+//  std::cerr << "==========" << std::endl;
+
+  // Array of coordinates for the quad
+  float vboData_[4 * 3 * 4 ] = { unprojectedBottomLeft[0]  , unprojectedBottomLeft[1]  , unprojectedBottomLeft[2],
+                                 unprojectedBottomRight[0] , unprojectedBottomRight[1] , unprojectedBottomRight[2],
+                                 unprojectedtopRight[0]    , unprojectedtopRight[1]    , unprojectedtopRight[2],
+                                 unprojectedtopLeft[0]     , unprojectedtopLeft[1]     , unprojectedtopLeft[2]
+                               };
+
+  if ( ! vbo_ ) {
+    glGenBuffersARB(1, &vbo_);
+  }
+
+  // Bind buffer
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo_);
+
+  // Upload to buffer ( 4 vertices with 3 coordinates for point and normal of 4 byte sized floats)
+  glBufferDataARB(GL_ARRAY_BUFFER_ARB, 4 * 3 * 4, &vboData_[0], GL_STATIC_DRAW_ARB);
+
+  // Set the buffers for rendering
+  ro.shaderDesc.shadeMode            = ACG::SG_SHADE_UNLIT;
+  ro.shaderDesc.vertexTemplateFile   = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "SkyDome" + QDir::separator() + "SkyDomeVertexShader.glsl";
+  ro.shaderDesc.fragmentTemplateFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "SkyDome" + QDir::separator() + "SkyDomeFragmentShader.glsl";
+  ro.vertexBuffer                    = vbo_;
+  ro.vertexDecl                      = &vertexDecl_;
+
+  ACG::SceneGraph::Material localMaterial = *_mat;
+  localMaterial.baseColor(ACG::Vec4f(1.0,0.0,0.0,1.0) );
+
+  ro.setMaterial(&localMaterial);
+  ro.glDrawArrays(GL_QUADS, 0, 4);
+
+  _renderer->addRenderObject(&ro);
 }
 
 

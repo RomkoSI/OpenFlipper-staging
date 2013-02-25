@@ -104,6 +104,11 @@ public:
      */
     void getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::SceneGraph::DrawModes::DrawMode&  _drawMode , const ACG::SceneGraph::Material* _mat);
 
+    /** Invalidate the buffers and the other data required for rendering
+     *
+     */
+    void update(){updateBuffers_ = true; };
+
 private:
     void drawSkyDome(ACG::GLState & _state);
     void drawSkyDomePick(ACG::GLState & _state);
@@ -116,6 +121,7 @@ private:
 
     ACG::VertexDeclaration vertexDecl_;
 
+    bool updateBuffers_;
 };
 
 #endif // SKYDOME_NODE_HH

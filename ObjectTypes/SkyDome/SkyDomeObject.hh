@@ -126,6 +126,9 @@ class DLLEXPORT SkyDomeObject : public BaseObjectData {
     /// Get all Info for the Object as a string
     SkyDome& getSkyDome();
 
+    /// Update buffers and data of the scenegraph node
+    void update(UpdateType _type = UPDATE_ALL);
+
   private:
     SkyDome skyDome_;
 
