@@ -48,7 +48,7 @@
 //=============================================================================
 
 /**
- * \file SkyDomeTypes.hh
+ * \file SkyDomeType.hh
  * This File contains the required types and typedefs for using SkyDome
  */
 
@@ -57,11 +57,12 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QString>
 
 //== SkyDome Type ===============================================
 
-class SkyDome {
+class ACGDLLEXPORT SkyDome {
 
 public:
   SkyDome() :

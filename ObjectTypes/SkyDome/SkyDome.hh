@@ -42,7 +42,7 @@
 
 
 /**
- * \file SkyDome.h
+ * \file SkyDome.hh
  * This File contains all required includes for using SkyDome
 */
 
@@ -50,7 +50,7 @@
 
 //== INCLUDES =================================================================
 
-/** \def DATA_SkyDome
+/** \def DATA_SKYDOME
  * Use this macro to reference Sky Domes
  */
 #define DATA_SKYDOME typeId("SkyDome")
