@@ -132,6 +132,13 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zoom with Ctrl + Mouse Wheel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="loadButton">
      <property name="toolTip">
       <string>Enable slicing for the current scene</string>
@@ -161,10 +168,6 @@
     </spacer>
    </item>
   </layout>
-  <zorder>loadButton</zorder>
-  <zorder>hFOV</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
  </widget>
  <resources/>
  <connections/>
