@@ -90,6 +90,9 @@ int AssimpPlugin::convertToOpenMesh(const aiScene *_scene) {
 
     emit openedFile( object->id() );
 
+    // Update viewport
+    PluginFunctions::viewAll();
+
     return objectId;
 }
 
@@ -111,7 +114,7 @@ void AssimpPlugin::convertAiMesh(PolyMesh *_polyMesh, aiMesh *_mesh) {
     vhandles.clear();
   }
 
-  if (_mesh->HasNormals())
+  if (!_mesh->HasNormals())
     _polyMesh->update_normals();
   else
     _polyMesh->update_face_normals();
@@ -135,7 +138,7 @@ void AssimpPlugin::convertAiMesh(TriMesh *_triMesh, aiMesh *_mesh) {
     vhandles.clear();
   }
 
-  if (_mesh->HasNormals())
+  if (!_mesh->HasNormals())
     _triMesh->update_normals();
   else
     _triMesh->update_face_normals();
