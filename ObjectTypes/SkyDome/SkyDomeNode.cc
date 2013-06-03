@@ -291,8 +291,10 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.debugName = "SkyDome";
   ro.priority = 100;
 
-  ro.texture = textureId_;
-  ro.shaderDesc.textured = true;
+  ACG::RenderObject::Texture tex;
+  tex.id = textureId_;
+
+  ro.addTexture(tex);
 
   // Render with depth test enabled
   ro.depthTest = true;
