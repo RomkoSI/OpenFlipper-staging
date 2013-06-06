@@ -59,8 +59,11 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
-struct aiScene;
-struct aiMesh;
+#include <assimp/Importer.hpp>
+#include <assimp/Exporter.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+
 
 class AssimpPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
     LoggingInterface, ScriptInterface
@@ -119,13 +122,19 @@ private slots:
 
 private:
 
-  int convertToOpenMesh(const aiScene* _scene);
+  int convertAiSceneToOpenMesh(const aiScene* _scene, QString _objectName);
+
+  bool convertOpenMeshToAiScene(aiScene* _scene, BaseObjectData* _object);
 
   /// converts _mesh into _polyMesh
-  void convertAiMesh(PolyMesh* _polyMesh, aiMesh* _mesh);
+  void convertAiMeshToPolyMesh(PolyMesh* _polyMesh, aiMesh* _mesh);
 
   /// converts _mesh into _triMesh
-  void convertAiMesh(TriMesh* _triMesh, aiMesh* _mesh);
+  void convertAiMeshToTriMesh(TriMesh* _triMesh, aiMesh* _mesh);
+
+  bool convertPolyMeshToAiMesh(PolyMesh* _polyMesh, aiMesh* _mesh);
+
+  bool convertTriMeshToAiMesh(TriMesh* _triMesh, aiMesh* _mesh);
 
   /// add a vertex from _mesh to _polyMesh and stores the index to handle mapping
   void mapVertices(PolyMesh* _polyMesh, aiMesh* _mesh);
