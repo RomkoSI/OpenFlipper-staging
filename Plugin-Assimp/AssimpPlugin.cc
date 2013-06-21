@@ -119,14 +119,24 @@ void AssimpPlugin::initializePlugin() {
 }
 
 int AssimpPlugin::convertAiSceneToOpenMesh(const aiScene *_scene, QString _objectName) {
+  int returnId = -1;
+  std::vector<int> ids;
+
+  if (_scene->mNumMeshes == 0)
+    emit log(LOGWARN, tr("aiScene contains no meshes"));
+
+  for (unsigned int i = 0; i < _scene->mNumMeshes; ++i) {
     int objectId = -1;
     emit addEmptyObject(type_, objectId);
 
     BaseObject* object(0);
     if(!PluginFunctions::getObject( objectId, object )) {
-        emit log(LOGERR, tr("Could not create new object!"));
-        return -1;
+      emit log(LOGERR, tr("Could not create new object!"));
+      return -1;
     }
+
+    if (i == 0)
+      returnId = objectId;
 
     object->setName(_objectName);
 
@@ -134,26 +144,37 @@ int AssimpPlugin::convertAiSceneToOpenMesh(const aiScene *_scene, QString _objec
     TriMeshObject*  triMeshObj  = dynamic_cast< TriMeshObject*  > (object);
 
     if (polyMeshObj) {
-      for (unsigned int i = 0; i < _scene->mNumMeshes; ++i)
-        convertPolyMeshToAiMesh(polyMeshObj->mesh(), _scene->mMeshes[i]);
+      convertPolyMeshToAiMesh(polyMeshObj->mesh(), _scene->mMeshes[i]);
 
       polyMeshObj->update();
       polyMeshObj->show();
 
+      ids.push_back(object->id());
     } else if (triMeshObj) {
-      for (unsigned int i = 0; i < _scene->mNumMeshes; ++i)
-        convertAiMeshToTriMesh(triMeshObj->mesh(), _scene->mMeshes[i]);
+      convertAiMeshToTriMesh(triMeshObj->mesh(), _scene->mMeshes[i]);
 
       triMeshObj->update();
       triMeshObj->show();
+
+      ids.push_back(object->id());
     }
 
     emit openedFile( object->id() );
+  }
 
-    // Update viewport
-    PluginFunctions::viewAll();
+  if (_scene->mNumMeshes > 1) {
+    bool dataControlExists = false;
+    pluginExists( "datacontrol", dataControlExists );
 
-    return objectId;
+    if ( dataControlExists ){
+      returnId = RPC::callFunctionValue<int>("datacontrol","groupObjects", ids, _objectName);
+    }
+  }
+
+  // Update viewport
+  PluginFunctions::viewAll();
+
+  return returnId;
 }
 
 bool AssimpPlugin::convertOpenMeshToAiScene(aiScene *_scene, BaseObjectData *_object) {
@@ -327,7 +348,7 @@ QString AssimpPlugin::getSaveFilters() {
 }
 
 QString AssimpPlugin::getLoadFilters() {
-  return QString( tr("Alias/Wavefront ( *.obj );;AutoCAD DXF ( *.dxf );;Collada ( *.dae );;Stereolithography files ( *.stl );;Polygon File Format files ( *.ply )") );
+  return QString( tr("Alias/Wavefront ( *.obj );;AutoCAD DXF ( *.dxf );;Collada ( *.dae );;Stereolithography files ( *.stl );;Polygon File Format files ( *.ply );;Blender 3D( *.blend );;3ds Max 3DS ( *.3ds )") );
 }
 
 QWidget *AssimpPlugin::saveOptionsWidget(QString) {

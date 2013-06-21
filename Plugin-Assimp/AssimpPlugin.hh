@@ -55,6 +55,7 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
@@ -66,7 +67,7 @@
 
 
 class AssimpPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
-    LoggingInterface, ScriptInterface
+    LoggingInterface, ScriptInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES(FileInterface)
@@ -74,6 +75,7 @@ class AssimpPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(ScriptInterface)
+  Q_INTERFACES(RPCInterface)
 
   signals:
     void openedFile( int _id );
@@ -86,6 +88,8 @@ class AssimpPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
 
     void deleteObject( int _id );
 
+    //RPCInterface
+    void pluginExists( QString _pluginName , bool& _exists  );
 public:
   AssimpPlugin();
 
