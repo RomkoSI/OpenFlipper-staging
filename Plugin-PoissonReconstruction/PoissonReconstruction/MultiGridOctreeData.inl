@@ -1701,6 +1701,7 @@ void Octree< Degree >::SetDivergenceStencil( int depth , Point3D< double > stenc
         };
 
         double dot = fData.vvDotTable[symIndex[0]] * fData.vvDotTable[symIndex[1]] * fData.vvDotTable[symIndex[2]];
+        Point3D<double> forClangSymbolFinder; //clang needs this, otherwise he will fail at the next lines with error message "error:  subscript of pointer to incomplete type 'Point3D<double> [5][5]"
 #if GRADIENT_DOMAIN_SOLUTION
         stencil[x][y][z][0] = fData.dvDotTable[aSymIndex[0]] * dot;
         stencil[x][y][z][1] = fData.dvDotTable[aSymIndex[1]] * dot;
