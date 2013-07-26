@@ -126,8 +126,10 @@ private slots:
 
 private:
 
+  /// converts an aiScene to a polymesh or trimesh
   int convertAiSceneToOpenMesh(const aiScene* _scene, QString _objectName);
 
+  /// converts a polymesh or trimesh to an aiScene
   bool convertOpenMeshToAiScene(aiScene* _scene, BaseObjectData* _object);
 
   /// converts _mesh into _polyMesh
@@ -136,8 +138,10 @@ private:
   /// converts _mesh into _triMesh
   void convertAiMeshToTriMesh(TriMesh* _triMesh, aiMesh* _mesh);
 
+  /// converts a polymesh to an aiMesh
   bool convertPolyMeshToAiMesh(PolyMesh* _polyMesh, aiMesh* _mesh);
 
+  /// converts a trimesh to an aiMesh
   bool convertTriMeshToAiMesh(TriMesh* _triMesh, aiMesh* _mesh);
 
   /// add a vertex from _mesh to _polyMesh and stores the index to handle mapping

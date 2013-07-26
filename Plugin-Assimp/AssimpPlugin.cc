@@ -36,7 +36,7 @@
 *                                                                            *
 *   $Revision: 13361 $                                                       *
 *   $LastChangedBy: moebius $                                                *
-*   $Date: 2012-01-12 16:33:16 +0100 (Thu, 12 Jan 2012) $                     *
+*   $Date: 2012-01-12 16:33:16 +0100 (Thu, 12 Jan 2012) $                    *
 *                                                                            *
 \*===========================================================================*/
 
@@ -348,7 +348,7 @@ QString AssimpPlugin::getSaveFilters() {
 }
 
 QString AssimpPlugin::getLoadFilters() {
-  return QString( tr("Alias/Wavefront ( *.obj );;AutoCAD DXF ( *.dxf );;Collada ( *.dae );;Stereolithography files ( *.stl );;Polygon File Format files ( *.ply );;Blender 3D( *.blend );;3ds Max 3DS ( *.3ds )") );
+  return QString( tr("Alias/Wavefront ( *.obj );;AutoCAD DXF ( *.dxf );;Collada ( *.dae );;Stereolithography files ( *.stl );;Polygon File Format files ( *.ply );;Blender 3D( *.blend );;3ds Max 3DS ( *.3ds );;3ds Max ASE( *.ase );;Industry Foundation Classes ( *.ifc );;XGL ( *.xgl *.zgl );;Lightwave ( *.lwo );;Lightwave Scene ( *.lws );;Modo ( *.lxo );;DirectX X ( *.x );;AC3D ( *.ac );;Milkshape 3D ( *.ms3d );;TrueSpace ( *.cob *.scn )") );
 }
 
 QWidget *AssimpPlugin::saveOptionsWidget(QString) {
