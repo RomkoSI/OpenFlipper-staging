@@ -161,12 +161,12 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
       TriMesh::VertexIter vit = mesh->vertices_begin();
       for ( ; vit != mesh->vertices_end(); ++vit )
       {
-        pt_data.push_back( mesh->point( vit )[0] );
-        pt_data.push_back( mesh->point( vit )[1] );
-        pt_data.push_back( mesh->point( vit )[2] );
-        pt_data.push_back( mesh->normal( vit )[0] );
-        pt_data.push_back( mesh->normal( vit )[1] );
-        pt_data.push_back( mesh->normal( vit )[2] );
+        pt_data.push_back( mesh->point( *vit )[0] );
+        pt_data.push_back( mesh->point( *vit )[1] );
+        pt_data.push_back( mesh->point( *vit )[2] );
+        pt_data.push_back( mesh->normal( *vit )[0] );
+        pt_data.push_back( mesh->normal( *vit )[1] );
+        pt_data.push_back( mesh->normal( *vit )[2] );
       }
     }
     //Poly mesh
@@ -180,12 +180,12 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
       PolyMesh::VertexIter vit = mesh->vertices_begin();
       for ( ; vit != mesh->vertices_end(); ++vit )
       {
-        pt_data.push_back( mesh->point( vit )[0] );
-        pt_data.push_back( mesh->point( vit )[1] );
-        pt_data.push_back( mesh->point( vit )[2] );
-        pt_data.push_back( mesh->normal( vit )[0] );
-        pt_data.push_back( mesh->normal( vit )[1] );
-        pt_data.push_back( mesh->normal( vit )[2] );
+        pt_data.push_back( mesh->point( *vit )[0] );
+        pt_data.push_back( mesh->point( *vit )[1] );
+        pt_data.push_back( mesh->point( *vit )[2] );
+        pt_data.push_back( mesh->normal( *vit )[0] );
+        pt_data.push_back( mesh->normal( *vit )[1] );
+        pt_data.push_back( mesh->normal( *vit )[2] );
       }
     }
     //Splat cloud
