@@ -116,6 +116,36 @@ AssimpPlugin::AssimpPlugin()
 }
 
 void AssimpPlugin::initializePlugin() {
+
+  QString info =
+    " Copyright (c) 2006-2012 assimp team<br>"
+    " All rights reserved.<br>"
+    " Redistribution and use in source and binary forms, with or without modification, are   "
+    " permitted provided that the following conditions are met: <br>                         "
+    " <br> "
+    " Redistributions of source code must retain the above copyright notice, this list of    "
+    " conditions and the following disclaimer.<br>                                           "
+    " <br>                                                                                   "
+    " Redistributions in binary form must reproduce the above copyright notice, this list    "
+    " of conditions and the following disclaimer in the documentation and/or other           "
+    " materials provided with the distribution.<br>                                          "
+    " <br>                                                                                   "
+    " Neither the name of the assimp team nor the names of its contributors may be used to   "
+    " endorse or promote products derived from this software without specific prior written  "
+    " permission.<br>                                                                        "
+      " <br>                                                                                   "
+    " THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY  "
+    " EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF"
+    " MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL "
+    " THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,    "
+    " SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,           "
+    " PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS"
+    " INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,      "
+    " STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF"
+    " THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                                                        "
+    " <br>                                                                                   ";
+
+    emit addAboutInfo(info,"File-Assimp Plugin");
 }
 
 int AssimpPlugin::convertAiSceneToOpenMesh(const aiScene *_scene, QString _objectName) {
@@ -264,8 +294,8 @@ bool AssimpPlugin::convertPolyMeshToAiMesh(PolyMesh *_polyMesh, aiMesh *_mesh) {
   std::map<OpenMesh::VertexHandle, int> vertexHandles;
   int i = 0;
   for (PolyMesh::ConstVertexIter v_it = _polyMesh->vertices_begin(); v_it != _polyMesh->vertices_end(); ++v_it, ++i) {
-      ACG::Vec3d pos = _polyMesh->point(v_it);
-      ACG::Vec3d normal = _polyMesh->normal(v_it);
+      ACG::Vec3d pos = _polyMesh->point(*v_it);
+      ACG::Vec3d normal = _polyMesh->normal(*v_it);
       _mesh->mVertices[i] = aiVector3D(pos[0], pos[1], pos[2]);
       _mesh->mNormals[i] = aiVector3D(normal[0], normal[1], normal[2]);
       vertexHandles[*v_it] = i;
@@ -274,15 +304,15 @@ bool AssimpPlugin::convertPolyMeshToAiMesh(PolyMesh *_polyMesh, aiMesh *_mesh) {
   i = 0;
   for (PolyMesh::ConstFaceIter f_it = _polyMesh->faces_begin(); f_it != _polyMesh->faces_end(); ++f_it, ++i) {
     int nVertices = 0;
-    for (PolyMesh::ConstFaceVertexIter fv_it = _polyMesh->fv_iter(*f_it); fv_it; ++fv_it) {
+    for (PolyMesh::ConstFaceVertexIter fv_it = _polyMesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it) {
       ++nVertices;
     }
 
     _mesh->mFaces[i].mNumIndices = nVertices;
     _mesh->mFaces[i].mIndices = new unsigned int[nVertices];
     int j = 0;
-    for (PolyMesh::ConstFaceVertexIter fv_it = _polyMesh->fv_iter(*f_it); fv_it; ++fv_it, ++j) {
-      _mesh->mFaces[i].mIndices[j] = vertexHandles[fv_it];
+    for (PolyMesh::ConstFaceVertexIter fv_it = _polyMesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it, ++j) {
+      _mesh->mFaces[i].mIndices[j] = vertexHandles[*fv_it];
     }
   }
 
@@ -301,8 +331,8 @@ bool AssimpPlugin::convertTriMeshToAiMesh(TriMesh *_triMesh, aiMesh *_mesh) {
   std::map<OpenMesh::VertexHandle, int> vertexHandles;
   int i = 0;
   for (TriMesh::ConstVertexIter v_it = _triMesh->vertices_begin(); v_it != _triMesh->vertices_end(); ++v_it, ++i) {
-      ACG::Vec3d pos = _triMesh->point(v_it);
-      ACG::Vec3d normal = _triMesh->normal(v_it);
+      ACG::Vec3d pos = _triMesh->point(*v_it);
+      ACG::Vec3d normal = _triMesh->normal(*v_it);
       _mesh->mVertices[i] = aiVector3D(pos[0], pos[1], pos[2]);
       _mesh->mNormals[i] = aiVector3D(normal[0], normal[1], normal[2]);
       vertexHandles[*v_it] = i;
@@ -313,8 +343,8 @@ bool AssimpPlugin::convertTriMeshToAiMesh(TriMesh *_triMesh, aiMesh *_mesh) {
     _mesh->mFaces[i].mNumIndices = 3;
     _mesh->mFaces[i].mIndices = new unsigned int[3];
     int j = 0;
-    for (PolyMesh::ConstFaceVertexIter fv_it = _triMesh->fv_iter(*f_it); fv_it; ++fv_it, ++j) {
-      _mesh->mFaces[i].mIndices[j] = vertexHandles[fv_it];
+    for (PolyMesh::ConstFaceVertexIter fv_it = _triMesh->fv_iter(*f_it); fv_it.is_valid(); ++fv_it, ++j) {
+      _mesh->mFaces[i].mIndices[j] = vertexHandles[*fv_it];
     }
   }
 
