@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2013 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 17080 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2013-07-19 12:58:31 +0200 (Fri, 19 Jul 2013) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -56,7 +56,7 @@ class PostProcessorGrayscalePlugin : public QObject, BaseInterface, PostProcesso
    Q_INTERFACES(PostProcessorInterface)
 
 #if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PostProcessorDepthImage")
+  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PostProcessorGrayscale")
 #endif
 
   public:
@@ -82,6 +82,5 @@ class PostProcessorGrayscalePlugin : public QObject, BaseInterface, PostProcesso
     /// shader
     GLSL::Program* shader_;
 
-  private:
 };
 
