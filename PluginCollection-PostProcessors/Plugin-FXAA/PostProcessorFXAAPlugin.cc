@@ -72,6 +72,9 @@ QString PostProcessorFXAAPlugin::postProcessorName() {
   return QString("FXAA");
 }
 
+QString PostProcessorFXAAPlugin::checkOpenGL() {
+  return QString("");
+}
 
 
 void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {

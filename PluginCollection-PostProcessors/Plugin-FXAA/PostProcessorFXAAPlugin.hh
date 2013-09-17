@@ -77,6 +77,8 @@ class PostProcessorFXAAPlugin : public QObject, BaseInterface, PostProcessorInte
 
     QString postProcessorName();
 
+    QString checkOpenGL();
+
   private:
 
     /// fxaa shader
