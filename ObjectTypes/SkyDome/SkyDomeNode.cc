@@ -341,12 +341,12 @@ getRenderObjects(ACG::IRenderer* _renderer, ACG::GLState&  _state , const ACG::S
   ro.setMaterial(&localMaterial);
   ro.glDrawArrays(GL_QUADS, 0, 4);
 
-  ro.addUniformValue("uUpperCutOff"   ,GL_FLOAT, dome_.topOffset() );
-  ro.addUniformValue("uHorizontalFOV" ,GL_FLOAT, dome_.horizontalFOV() );
-  ro.addUniformValue("uVerticalFOV"   ,GL_FLOAT, dome_.verticalFOV() );
+  ro.setUniform("uUpperCutOff"   , dome_.topOffset() );
+  ro.setUniform("uHorizontalFOV" , dome_.horizontalFOV() );
+  ro.setUniform("uVerticalFOV"   , dome_.verticalFOV() );
 
-  ro.addUniformValue("uVP_width"   ,GL_FLOAT, float(_state.viewport_width()) );
-  ro.addUniformValue("uVP_height"  ,GL_FLOAT, float(_state.viewport_height()) );
+  ro.setUniform("uVP_width"   , float(_state.viewport_width()) );
+  ro.setUniform("uVP_height"  , float(_state.viewport_height()) );
 
   _renderer->addRenderObject(&ro);
 }
