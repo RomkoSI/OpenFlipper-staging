@@ -47,7 +47,9 @@
 #include <ObjectTypes/SkyDome/SkyDomeType.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#undef QT_NO_OPENGL
 #include <QGLWidget>
+#define QT_NO_OPENGL
 
 //== IMPLEMENTATION ==========================================================
 
