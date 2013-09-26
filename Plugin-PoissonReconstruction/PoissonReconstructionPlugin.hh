@@ -62,6 +62,10 @@ Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(LoadSaveInterface)
 Q_INTERFACES(AboutInfoInterface)
 
+  #if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PoissonReconstruction")
+  #endif
+
 signals:
 
   //BaseInterface

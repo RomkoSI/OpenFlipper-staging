@@ -268,6 +268,6 @@ void PoissonPlugin::slotPoissonReconstruct(){
 
 }
 
-
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2( poissonplugin , PoissonPlugin );
-
+#endif

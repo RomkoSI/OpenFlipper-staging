@@ -60,6 +60,10 @@ Q_INTERFACES(ToolboxInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(LoadSaveInterface)
 
+  #if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PanoramaControl")
+  #endif
+
 signals:
 
   //BaseInterface
