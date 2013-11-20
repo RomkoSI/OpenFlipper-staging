@@ -260,6 +260,7 @@ void PoissonPlugin::slotPoissonReconstruct(){
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_SPLATCLOUD )) ;o_it != PluginFunctions::objectsEnd(); ++o_it)
   {
     ids.push_back(o_it->id());
+    std::cerr << "Added " << o_it->id() << std::endl;
   }
 
   const int depth = tool_->depthBox->value();
