@@ -208,8 +208,8 @@ int Factor(double a4,double a3,double a2,double a1,double a0,double roots[4][2],
 }
 
 int Solve(const double* eqns,const double* values,double* solutions,int dim){
-	int i,j,eIndex;
-	double v,m;
+	int i,j;
+	double v;
 	int *index=new int[dim];
 	int *set=new int[dim];
 	double* myEqns=new double[dim*dim];
@@ -222,8 +222,8 @@ int Solve(const double* eqns,const double* values,double* solutions,int dim){
 	}
 	for(i=0;i<dim;i++){
 		// Find the largest equation that has a non-zero entry in the i-th index
-		m=-1;
-		eIndex=-1;
+		double m=-1;
+		int eIndex = -1;
 		for(j=0;j<dim;j++){
 			if(set[j]){continue;}
 			if(myEqns[j*dim+i]!=0 && fabs(myEqns[j*dim+i])>m){
