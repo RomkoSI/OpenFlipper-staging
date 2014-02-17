@@ -50,7 +50,10 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
-#include <ObjectTypes/SplatCloud/SplatCloud.hh>
+
+#ifdef ENABLE_SPLATCLOUD_SUPPORT
+  #include <ObjectTypes/SplatCloud/SplatCloud.hh>
+#endif
 
 #include "PoissonReconstructionT.hh"
 
@@ -189,6 +192,7 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
       }
     }
     //Splat cloud
+   #ifdef ENABLE_SPLATCLOUD_SUPPORT
     else if( obj->dataType() == DATA_SPLATCLOUD)
     {
 
@@ -213,6 +217,7 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
         pt_data.push_back( cloud->normals( i )[2] );
       }
     }
+#endif
     else
       emit log(LOGERR,QString("ObjectType of Object with id %1 is unsupported").arg(*idIter));
   }
@@ -257,7 +262,14 @@ void PoissonPlugin::slotPoissonReconstruct(){
     return;
 
   IdList ids;
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,(DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_SPLATCLOUD )) ;o_it != PluginFunctions::objectsEnd(); ++o_it)
+
+  DataType restriction = (DATA_TRIANGLE_MESH | DATA_POLY_MESH);
+
+  #ifdef ENABLE_SPLATCLOUD_SUPPORT
+    restriction |= DATA_SPLATCLOUD;
+  #endif
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, restriction ) ;o_it != PluginFunctions::objectsEnd(); ++o_it)
   {
     ids.push_back(o_it->id());
     std::cerr << "Added " << o_it->id() << std::endl;
