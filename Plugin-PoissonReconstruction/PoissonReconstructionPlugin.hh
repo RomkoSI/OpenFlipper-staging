@@ -104,9 +104,9 @@ private slots:
 
 public slots:
 
-  void poissonReconstruct(int _id, int _depth = 7);
+int poissonReconstruct(int _id, int _depth = 7);
 
-  void poissonReconstruct(IdList _ids, int _depth = 7);
+  int poissonReconstruct(IdList _ids, int _depth = 7);
 
 public :
   PoissonPlugin();

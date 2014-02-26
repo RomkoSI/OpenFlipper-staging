@@ -117,25 +117,27 @@ void PoissonPlugin::initializePlugin(){
 
 void PoissonPlugin::pluginsInitialized()
 {
-  emit setSlotDescription("poissonReconstruct(int,int)",tr("Reconstruct a triangle mesh from the given object."),
+  emit setSlotDescription("poissonReconstruct(int,int)",tr("Reconstruct a triangle mesh from the given object. Returns the id of the new object or -1 if it failed."),
       QStringList(tr("ObjectId;depth").split(';')),QStringList(tr("ObjectId of the object;octree depth").split(';')));
-  emit setSlotDescription("poissonReconstruct(IdList,int)",tr("Reconstruct one triangle mesh from the given objects."),
+  emit setSlotDescription("poissonReconstruct(IdList,int)",tr("Reconstruct one triangle mesh from the given objects. Returns the id of the new object or -1 if it failed."),
       QStringList(tr("IdList;depth").split(';')),QStringList(tr("Id of the objects;octree depth").split(';')));
 
-  emit setSlotDescription("poissonReconstruct(int)",tr("Reconstruct a triangle mesh from the given object. (Octree depth defaults to 7)"),
+  emit setSlotDescription("poissonReconstruct(int)",tr("Reconstruct a triangle mesh from the given object. (Octree depth defaults to 7). Returns the id of the new object or -1 if it failed."),
       QStringList(tr("ObjectId")),QStringList(tr("ObjectId of the object")));
-  emit setSlotDescription("poissonReconstruct(IdList)",tr("Reconstruct one triangle mesh from the given objects. (Octree depth defaults to 7)"),
+  emit setSlotDescription("poissonReconstruct(IdList)",tr("Reconstruct one triangle mesh from the given objects. (Octree depth defaults to 7). Returns the id of the new object or -1 if it failed."),
       QStringList(tr("IdList")),QStringList(tr("Id of the objects")));
 }
 
-void PoissonPlugin::poissonReconstruct(int _id, int _depth)
+int PoissonPlugin::poissonReconstruct(int _id, int _depth)
 {
   IdList list(1,_id);
-  poissonReconstruct(list, _depth);
+  return poissonReconstruct(list, _depth);
 }
 
-void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
+int PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 {
+  IdList generatedMeshes;
+
   unsigned int n_points = 0;
 
   // Data container for the algorithm
@@ -223,11 +225,13 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
   }
 
 
+  int meshId = -1;
+
   //create and reconstruct mesh
   if ( !pt_data.empty() ) {
 
     // Add empty triangle mesh
-    int meshId = -1;
+
     emit addEmptyObject ( DATA_TRIANGLE_MESH, meshId );
 
     TriMeshObject* finalObject = PluginFunctions::triMeshObject(meshId);
@@ -250,9 +254,12 @@ void PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
     } else {
       emit log(LOGERR,"Reconstruction failed");
       emit deleteObject( meshId );
+      meshId = -1;
     }
-
   }
+
+  return meshId;
+
 }
 
 
