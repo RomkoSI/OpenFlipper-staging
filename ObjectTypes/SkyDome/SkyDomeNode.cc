@@ -58,6 +58,7 @@ SkyDomeNode::SkyDomeNode(SkyDome& _dome, BaseNode *_parent, std::string _name)
 :BaseNode(_parent, _name),
  dome_(_dome),
  vbo_(0),
+ textureId_(0),
  updateBuffers_(true)
 {
   vertexDecl_.addElement(GL_FLOAT, 3, ACG::VERTEX_USAGE_POSITION);
