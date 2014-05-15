@@ -79,6 +79,9 @@ class AssimpPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInter
   Q_INTERFACES(RPCInterface)
   Q_INTERFACES(AboutInfoInterface)
 
+  #if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-Assimp")
+  #endif
 
   signals:
     void openedFile( int _id );

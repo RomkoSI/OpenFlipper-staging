@@ -449,4 +449,6 @@ bool AssimpPlugin::saveObject(int _id, QString _filename) {
   return ok;
 }
 
-Q_EXPORT_PLUGIN2( assimpplugin , AssimpPlugin )
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2( assimpplugin , AssimpPlugin )
+#endif
