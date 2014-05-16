@@ -368,7 +368,7 @@ void AssimpPlugin::mapVertices(TriMesh *_triMesh, aiMesh *_mesh) {
 }
 
 DataType AssimpPlugin::supportedType() {
-  DataType type = DATA_POLY_MESH | DATA_TRIANGLE_MESH;
+  DataType type = DATA_POLY_MESH | DATA_TRIANGLE_MESH | DATA_GROUP;
   return type;
 }
 
@@ -416,7 +416,8 @@ int AssimpPlugin::loadObject(QString _filename) {
 }
 
 int AssimpPlugin::loadObject(QString _filename, DataType _type) {
-  type_ = _type;
+  if (_type != DATA_GROUP) //if equal => autodetect data
+    type_ = _type;
   return loadObject(_filename);
 }
 
