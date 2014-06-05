@@ -54,8 +54,7 @@
 
 #include <vector>
 
-// requires texture buffers
-#ifdef GL_ARB_texture_buffer_object
+
 
 class DeferredShading : public QObject, BaseInterface, RenderInterface, ACG::IRenderer
 {
@@ -141,10 +140,16 @@ private:
     ACG::FBO* scene_;
   };
 
-  ACG::TextureBuffer filterWeightsBuffer_;
+
+
   int numSamples_;
 
-  ACG::TextureBuffer materialBuffer_;
+  // requires texture buffers and will not load without them
+  #ifdef GL_ARB_texture_buffer_object
+    ACG::TextureBuffer filterWeightsBuffer_;
+    ACG::TextureBuffer materialBuffer_;
+  #endif
+
   std::vector<ACG::Vec3f> materialBufferData_;
 
   /**
@@ -155,4 +160,4 @@ private:
 };
 
 
-#endif
+

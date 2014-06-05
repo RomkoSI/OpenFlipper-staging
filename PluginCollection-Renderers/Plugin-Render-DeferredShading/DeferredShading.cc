@@ -56,9 +56,6 @@
 
 // =================================================
 
-#ifdef GL_ARB_texture_buffer_object
-
-
 #define GBUFFER_INCLUDE_FILE            "DeferredShading/GBufferAccess.glsl"
 
 #define SCREENQUAD_VERTEXSHADER_FILE    "DeferredShading/screenquad.glsl"
@@ -164,6 +161,7 @@ QString DeferredShading::renderObjectsInfo(bool _outputShaderInfo) {
 
 void DeferredShading::render(ACG::GLState* _glState, Viewer::ViewerProperties& _properties) {
 
+#ifdef GL_ARB_texture_buffer_object
   // collect renderobjects + prepare OpenGL state
   prepareRenderingPipeline(_glState, _properties.drawMode(), PluginFunctions::getSceneGraphRootNode());
 
@@ -422,6 +420,9 @@ void DeferredShading::render(ACG::GLState* _glState, Viewer::ViewerProperties& _
   // restore common opengl state
   // log window remains hidden otherwise
   finishRenderingPipeline();
+
+#endif
+
 }
 
 QString DeferredShading::checkOpenGL() {
@@ -556,6 +557,3 @@ void DeferredShading::slotMSAASelection( QAction *  _action) {
 #if QT_VERSION < 0x050000
   Q_EXPORT_PLUGIN2( deferredshading , DeferredShading );
 #endif
-
-
-#endif // GL_ARB_texture_buffer_object
