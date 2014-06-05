@@ -54,6 +54,9 @@
 
 #include <vector>
 
+// requires texture buffers
+#ifdef GL_ARB_texture_buffer_object
+
 class DeferredShading : public QObject, BaseInterface, RenderInterface, ACG::IRenderer
 {
   Q_OBJECT
@@ -151,3 +154,5 @@ private:
   std::map<int, ViewerResources> viewerRes_;
 };
 
+
+#endif

@@ -56,6 +56,9 @@
 
 // =================================================
 
+#ifdef GL_ARB_texture_buffer_object
+
+
 #define GBUFFER_INCLUDE_FILE            "DeferredShading/GBufferAccess.glsl"
 
 #define SCREENQUAD_VERTEXSHADER_FILE    "DeferredShading/screenquad.glsl"
@@ -554,3 +557,5 @@ void DeferredShading::slotMSAASelection( QAction *  _action) {
   Q_EXPORT_PLUGIN2( deferredshading , DeferredShading );
 #endif
 
+
+#endif // GL_ARB_texture_buffer_object
