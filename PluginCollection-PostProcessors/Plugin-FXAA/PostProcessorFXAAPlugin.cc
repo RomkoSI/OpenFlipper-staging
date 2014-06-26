@@ -40,11 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#if QT_VERSION >= 0x050000 
-  #include <QtWidgets>
-#else
-  #include <QtGui>
-#endif
+#include <GL/glew.h>
 
 #include "PostProcessorFXAAPlugin.hh"
 
@@ -70,10 +66,6 @@ PostProcessorFXAAPlugin::~PostProcessorFXAAPlugin()
 
 QString PostProcessorFXAAPlugin::postProcessorName() {
   return QString("FXAA");
-}
-
-QString PostProcessorFXAAPlugin::checkOpenGL() {
-  return QString("");
 }
 
 

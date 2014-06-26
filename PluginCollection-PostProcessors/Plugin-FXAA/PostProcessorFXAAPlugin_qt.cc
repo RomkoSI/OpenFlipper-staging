@@ -1,7 +1,7 @@
 /*===========================================================================*\
 *                                                                            *
 *                              OpenFlipper                                   *
-*      Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen       *
+*      Copyright (C) 2001-2014 by Computer Graphics Group, RWTH Aachen       *
 *                           www.openflipper.org                              *
 *                                                                            *
 *--------------------------------------------------------------------------- *
@@ -34,56 +34,21 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 17080 $                                                       *
-*   $LastChangedBy: moeller $                                                *
-*   $Date: 2013-07-19 12:58:31 +0200 (Fri, 19 Jul 2013) $                     *
+*   $Revision: 18127 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2014-02-05 10:12:54 +0100 (Wed, 05 Feb 2014) $                     *
 *                                                                            *
 \*===========================================================================*/
 
+/**
+ * @file Contains definitions that require qt headers which are incompatible
+ * with glew.h.
+ */
 
-#include <QObject>
+#include "PostProcessorFXAAPlugin.hh"
+#include <QGLFormat>
 
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
-
-#include <ACG/GL/globjects.hh>
-#include <ACG/ShaderUtils/GLSLShader.hh>
-
-class PostProcessorFXAAPlugin : public QObject, BaseInterface, PostProcessorInterface
-{
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(PostProcessorInterface)
-
-#if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PostProcessorFXAA")
-#endif
-
-  public:
-   PostProcessorFXAAPlugin();
-   ~PostProcessorFXAAPlugin();
-  
-  public :
-    QString name() { return (QString("FXAA Postprocessor Plugin")); };
-    QString description( ) { return (QString(tr("Fast approximate anti aliasing"))); };
-
-    
-  public slots:
-    QString version() { return QString("1.0"); };
-    
-  private slots:
-
-    void postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO);
-
-    QString postProcessorName();
-
-    QString checkOpenGL();
-
-  private:
-
-    /// fxaa shader
-    GLSL::Program* fxaa_;
-
-  private:
-};
+QString PostProcessorFXAAPlugin::checkOpenGL() {
+  return QString("");
+}
 
