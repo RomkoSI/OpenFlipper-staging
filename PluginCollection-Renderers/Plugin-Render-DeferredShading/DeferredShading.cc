@@ -40,6 +40,8 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <GL/glew.h>
+
 #include "DeferredShading.hh"
 
 #include <OpenFlipper/common/GlobalOptions.hh>
@@ -48,11 +50,6 @@
 #include <ACG/GL/ScreenQuad.hh>
 #include <ACG/GL/GLError.hh>
 #include <ACG/QtWidgets/QtColorChooserButton.hh>
-
-#undef QT_NO_OPENGL
-#include <QGLFormat>
-#define QT_NO_OPENGL
-
 
 // =================================================
 
@@ -425,25 +422,7 @@ void DeferredShading::render(ACG::GLState* _glState, Viewer::ViewerProperties& _
 
 }
 
-QString DeferredShading::checkOpenGL() {
-  // Get version and check
-  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( !flags.testFlag(QGLFormat::OpenGL_Version_3_2) )
-    return QString("Insufficient OpenGL Version! OpenGL 3.2 or higher required");
 
-  // Check extensions
-  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
-  QString missing("");
-  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") )
-    missing += "GL_ARB_vertex_buffer_object extension missing\n";
-
-#ifndef __APPLE__
-  if ( !glExtensions.contains("GL_ARB_vertex_program") )
-    missing += "GL_ARB_vertex_program extension missing\n";
-#endif
-
-  return missing;
-}
 
 void DeferredShading::reloadShaders() {
   const int numShaders = 9;
@@ -498,41 +477,7 @@ void DeferredShading::ViewerResources::resize( int _newWidth, int _newHeight, in
 
   _numSamples = scene_->setMultisampling(_numSamples, GL_TRUE);
   scene_->resize(_newWidth, _newHeight);
-}
 
-
-QAction* DeferredShading::optionsAction() {
-//  QAction * action = new QAction("DeferredShading Renderer Options" , this );
-//
-//   connect(action,SIGNAL(triggered( )),this,SLOT(reloadShaders( )));
-// 
-//   return action;
-
-  QMenu* menu = new QMenu("DeferredShading Renderer Options");
-
-  // Recreate actionGroup
-  QActionGroup* modeGroup = new QActionGroup( this );
-  modeGroup->setExclusive( true );
-
-  QAction * action = new QAction("0x MSAA" , modeGroup );
-  action->setCheckable( true );
-  action->setChecked(true);
-
-  action = new QAction("2x MSAA" , modeGroup );
-  action->setCheckable( true );
-
-  action = new QAction("4x MSAA" , modeGroup );
-  action->setCheckable( true );
-
-  action = new QAction("8x MSAA" , modeGroup );
-  action->setCheckable( true );
-
-
-  menu->addActions(modeGroup->actions());
-
-  connect(modeGroup,SIGNAL(triggered( QAction * )),this,SLOT(slotMSAASelection( QAction * )));
-
-  return menu->menuAction();
 }
 
 void DeferredShading::slotMSAASelection( QAction *  _action) {
@@ -557,3 +502,4 @@ void DeferredShading::slotMSAASelection( QAction *  _action) {
 #if QT_VERSION < 0x050000
   Q_EXPORT_PLUGIN2( deferredshading , DeferredShading );
 #endif
+
