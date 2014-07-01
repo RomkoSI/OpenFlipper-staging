@@ -41,19 +41,20 @@
 \*===========================================================================*/
 
 
+#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+
+#include "TangentSpace.hh"
+
+
+
 #if QT_VERSION >= 0x050000 
   #include <QtWidgets>
 #else
   #include <QtGui>
 #endif
-
-
-#include "TangentSpace.hh"
-
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-
 #include <QVBoxLayout>
 #include <QHash>
+
 
 #include <map>
 

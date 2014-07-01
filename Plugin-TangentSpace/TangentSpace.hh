@@ -45,10 +45,10 @@
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <OpenFlipper/common/Types.hh>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
-#include <OpenFlipper/common/Types.hh>
 
 
 #include <QObject>
