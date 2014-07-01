@@ -40,15 +40,14 @@
 *                                                                            *
 \*===========================================================================*/
 
+#include <ObjectTypes/SkyDome/SkyDome.hh>
+
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
-#include <ObjectTypes/SkyDome/SkyDome.hh>
 
 #include <QtGui>
 
 #include "PanoramaControlPlugin.hh"
-#include <iostream>
-
 
 
 PanoramaControlPlugin::PanoramaControlPlugin() :
