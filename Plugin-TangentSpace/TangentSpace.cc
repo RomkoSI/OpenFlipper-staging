@@ -50,8 +50,6 @@
 
 #include "TangentSpace.hh"
 
-#include <ACG/GL/GLState.hh>
-
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 #include <QVBoxLayout>

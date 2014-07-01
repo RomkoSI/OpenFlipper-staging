@@ -45,7 +45,6 @@
 
 #include <QObject>
 #include <QMenuBar>
-
 #include <QLineEdit>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
