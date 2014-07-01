@@ -40,6 +40,9 @@
 *                                                                            *
 \*===========================================================================*/
 
+#ifdef ENABLE_SPLATCLOUD_SUPPORT
+  #include <ObjectTypes/SplatCloud/SplatCloud.hh>
+#endif
 
 #include <QtGui>
 
@@ -51,9 +54,7 @@
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
-#ifdef ENABLE_SPLATCLOUD_SUPPORT
-  #include <ObjectTypes/SplatCloud/SplatCloud.hh>
-#endif
+
 
 #include "PoissonReconstructionT.hh"
 
