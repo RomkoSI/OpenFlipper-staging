@@ -42,15 +42,17 @@
 
 #pragma once
 
-#include <QObject>
-#include <QtGui>
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 
 #include "PanoramaToolbox.hh"
+
+#include <QObject>
+#include <QtGui>
+
+
 
 class PanoramaControlPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, LoadSaveInterface
 {
