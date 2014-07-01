@@ -42,14 +42,16 @@
 
 #pragma once
 
-#include <QObject>
-#include <QtGui>
+
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/AboutInfoInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+
+#include <QObject>
+#include <QtGui>
 
 #include "PoissonToolbox.hh"
 
