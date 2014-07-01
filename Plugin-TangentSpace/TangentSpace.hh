@@ -43,9 +43,6 @@
 #ifndef TANGENTSPACEPLUGIN_HH
 #define TANGENTSPACEPLUGIN_HH
 
-#include <QObject>
-#include <QMenuBar>
-#include <QLineEdit>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
@@ -53,6 +50,11 @@
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+
+
+#include <QObject>
+#include <QMenuBar>
+#include <QLineEdit>
 
 class TangentSpace : public QObject, BaseInterface, ToolboxInterface
 {
