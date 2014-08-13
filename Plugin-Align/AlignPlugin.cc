@@ -2,13 +2,13 @@
  * @author Vladimir Chalupecky (vladimir.chalupecky@gmail.com)
  */
 
-#include "AlignPlugin.hh"
-
 #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <Eigen/Dense>
+
+#include "AlignPlugin.hh"
 
 AlignPlugin::AlignPlugin()
 	: sourceMeshCombo_()

@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <utility>
 
-#include <QAbstractItemModel>
-
 #include <ObjectTypes/HexahedralMesh/HexahedralMesh.hh>
 #include <ObjectTypes/PolyhedralMesh/PolyhedralMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/DataTypes.hh>
+
+#include <QAbstractItemModel>
 
 struct Is_source_mesh {
 	bool operator()(BaseObjectData *object) const
