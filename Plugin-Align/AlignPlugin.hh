@@ -6,6 +6,7 @@
 
 #include <set>
 
+#include <QObject>
 
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
@@ -16,7 +17,7 @@
 
 #include <Eigen/Geometry>
 
-#include <QObject>
+
 #include "ObjectInfoListModel.hh"
 
 class AlignPlugin : public QObject,
