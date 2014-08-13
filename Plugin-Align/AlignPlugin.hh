@@ -5,6 +5,7 @@
  */
 
 #include <set>
+#include <QObject>
 
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
