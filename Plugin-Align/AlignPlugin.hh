@@ -6,14 +6,14 @@
 
 #include <set>
 
-#include <QObject>
-
+#include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
-#include <OpenFlipper/common/Types.hh>
+
+#include <QObject>
 
 #include <Eigen/Geometry>
 
