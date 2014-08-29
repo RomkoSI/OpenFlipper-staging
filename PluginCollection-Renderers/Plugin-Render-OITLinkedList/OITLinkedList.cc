@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 13374 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2012-01-13 09:38:16 +0100 (Fri, 13 Jan 2012) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -53,6 +53,9 @@
 
 #include <ACG/GL/GLError.hh>
 
+
+// check for glew symbol definition
+#ifdef GL_ARB_shader_image_load_store
 
 
 /*
@@ -385,6 +388,29 @@ void OITLinkedList::renderOIT(int w, int h, bool multisampled)
 }
 
 
+
+QString OITLinkedList::checkOpenGL()
+{
+  // Get version and check
+  if ( !ACG::openGLVersion(4,2) )
+    return QString("Insufficient OpenGL Version! OpenGL 4.2 or higher required");
+
+  // Check extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+  QString missing("");
+  if ( !glExtensions.contains("ARB_shader_image_load_store") )
+    missing += "ARB_shader_image_load_store extension missing\n";
+
+  if ( !glExtensions.contains("GL_ARB_shader_atomic_counters") )
+    missing += "GL_ARB_shader_atomic_counters extension missing\n";
+
+  if ( !glExtensions.contains("GL_ARB_gpu_shader5") )
+    missing += "GL_ARB_gpu_shader5 extension missing\n";
+
+  return missing;
+}
+
+
 QString OITLinkedList::renderObjectsInfo( bool _outputShaderInfo )
 {
   std::vector<ACG::ShaderModifier*> mods;
@@ -397,3 +423,6 @@ QString OITLinkedList::renderObjectsInfo( bool _outputShaderInfo )
 #endif
 
 
+
+
+#endif // GL_ARB_shader_image_load_store

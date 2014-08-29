@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 13374 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2012-01-13 09:38:16 +0100 (Fri, 13 Jan 2012) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -53,6 +53,11 @@
 #include <ACG/GL/IRenderer.hh>
 #include <ACG/GL/globjects.hh>
 #include <ACG/GL/FBO.hh>
+
+
+// check for glew symbol definition
+#ifdef GL_ARB_shader_image_load_store
+
 
 class OITLinkedList : public QObject, BaseInterface, RenderInterface, LoggingInterface, ACG::IRenderer
 {
@@ -117,3 +122,5 @@ private:
 
 };
 
+
+#endif // GL_ARB_shader_image_load_store
