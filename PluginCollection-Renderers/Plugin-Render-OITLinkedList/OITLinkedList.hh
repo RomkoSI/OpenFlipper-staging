@@ -55,9 +55,6 @@
 #include <ACG/GL/FBO.hh>
 
 
-// check for glew symbol definition
-#ifdef GL_ARB_shader_image_load_store
-
 
 class OITLinkedList : public QObject, BaseInterface, RenderInterface, LoggingInterface, ACG::IRenderer
 {
@@ -123,4 +120,3 @@ private:
 };
 
 
-#endif // GL_ARB_shader_image_load_store
