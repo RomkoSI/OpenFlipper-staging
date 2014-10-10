@@ -68,8 +68,15 @@ QString PostProcessorFXAAPlugin::postProcessorName() {
   return QString("FXAA");
 }
 
+QString PostProcessorFXAAPlugin::checkOpenGL() {
+  if ( ! ACG::openGLVersion(3, 0) )
+    return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
 
-void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const PostProcessorInput& _input, GLuint _targetFBO) {
+  return QString("");
+}
+
+
+void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
 
   // ======================================================================================================
   // Load shader if needed
@@ -83,13 +90,14 @@ void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const PostProc
 
   glActiveTexture(GL_TEXTURE0);
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input.colorTex_);
+  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
 
   // ======================================================================================================
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _targetFBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
+  glDrawBuffer(_output.drawBuffer_);
 
   // ======================================================================================================
   // Clear rendering buffer
@@ -113,7 +121,7 @@ void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const PostProc
   fxaa_->use();
   fxaa_->setUniform("textureSampler", 0);
 
-  ACG::Vec2f texcoordOffset(1.0f / float(_input.width), 1.0f / float(_input.height));
+  ACG::Vec2f texcoordOffset(1.0f / float(_input[0]->width), 1.0f / float(_input[0]->height));
   fxaa_->setUniform("texcoordOffset", texcoordOffset);
 
   // ======================================================================================================
