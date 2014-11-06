@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 18129 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2014-02-05 10:25:53 +0100 (Mi, 05. Feb 2014) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -55,6 +55,8 @@
 #include <QMenuBar>
 #include <QLineEdit>
 
+#include <string>
+
 class TangentSpace : public QObject, BaseInterface, ToolboxInterface
 {
   Q_OBJECT
@@ -69,8 +71,8 @@ class TangentSpace : public QObject, BaseInterface, ToolboxInterface
 
     void updatedObject(int, const UpdateType&);
 
-  // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );
+    // ToolboxInterface
+    void addToolbox( QString  _name  , QWidget* _widget, QIcon* _icon);
 
   private slots:
     void pluginsInitialized();

@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision: 18129 $                                                       *
-*   $LastChangedBy: moebius $                                                *
-*   $Date: 2014-02-05 10:25:53 +0100 (Mi, 05. Feb 2014) $                     *
+*   $Revision$                                                       *
+*   $LastChangedBy$                                                *
+*   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
 
@@ -45,6 +45,7 @@
 
 #include "TangentSpace.hh"
 
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 
 #if QT_VERSION >= 0x050000 
@@ -67,7 +68,10 @@
 #include <Eigen/SVD>
 #endif // ENABLE_EIGEN3
 
-#define CMP_EPS 1e-6f
+#include <limits>
+
+
+const float cmp_eps = std::numeric_limits<float>::epsilon();
 
 
 /*
@@ -181,8 +185,8 @@ TangentSpace::pluginsInitialized()
   connect(button,SIGNAL(clicked() ),this,SLOT(slotComputePerVertex()));
   connect(buttonH,SIGNAL(clicked() ),this,SLOT(slotComputePerHalfedge()));
 
-
-  emit addToolbox( tr("TangentSpace") , tool_ );
+  QIcon* icon = new QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "tangent_space_icon.png");
+  emit addToolbox( tr("TangentSpace") , tool_ , icon );
 
 
 }
@@ -356,7 +360,7 @@ struct TangentSpace_SmoothingGroupKey
     if (cosTheta > 0.998f)
     {
       ACG::Vec2f d = uv - rhs.uv;
-      if ( fabsf(d[0]) < CMP_EPS && fabsf(d[1]) < CMP_EPS )
+      if ( fabsf(d[0]) < cmp_eps && fabsf(d[1]) < cmp_eps )
         return true;
     }
 
@@ -834,13 +838,13 @@ void TangentSpace::TangentBasis::orthonormalize(int method)
   normalize();
 
   // check for linear independence
-  if ( fabsf( fabsf(t | b) - 1.0f ) < CMP_EPS )
+  if ( fabsf( fabsf(t | b) - 1.0f ) < cmp_eps )
   {
     std::cerr << "warning: degenerated uv mapping" << std::endl;
     b = n % t;
   }
 
-  if ( fabsf( fabsf(n | t) - 1.0f ) < CMP_EPS )
+  if ( fabsf( fabsf(n | t) - 1.0f ) < cmp_eps )
   {
     std::cerr << "warning: degenerated uv mapping" << std::endl;
     t = b % n;

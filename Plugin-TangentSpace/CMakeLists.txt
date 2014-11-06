@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin (OPTDEPS EIGEN3)
+openflipper_plugin (OPTDEPS EIGEN3 INSTALLDATA Icons)
