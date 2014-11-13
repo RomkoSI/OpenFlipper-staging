@@ -47,7 +47,7 @@
 
 #include <ACG/GL/ScreenQuad.hh>
 #include <ACG/GL/ShaderCache.hh>
-#include <ACG/GL/Debug.hh>
+//#include <ACG/GL/Debug.hh>
 
 #include "sat.hh"
 

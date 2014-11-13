@@ -48,9 +48,11 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/GLFormatInfo.hh>
 
-#include <ACG/GL/Debug.hh>
+//#include <ACG/GL/Debug.hh>
 //#define SAT_DBG_DIR "/home/tenter/dbg/sat_out/"
 #define SAT_DBG_DIR "c:/dbg/sat_out/"
+
+//#define SAT_DBG
 
 
 /*
@@ -187,8 +189,10 @@ bool PrefixSumPlan::execute( ACG::TextureBuffer* _src, ACG::TextureBuffer* _dst 
     if (dbgProfile_)
       std::cout << "psum: " << perfCounter_.elapsedMs() << std::endl;
 
+#ifdef SAT_DBG
     if (dbgOutput_)
       ACG::GLDebug::dumpBufferData(GL_TEXTURE_BUFFER, _dst->getBufferId(), SAT_DBG_DIR "1d_pass1.bin");
+#endif
 
     if (numWorkGroupsX_ > 1)
     {
@@ -228,13 +232,14 @@ bool PrefixSumPlan::execute( ACG::TextureBuffer* _src, ACG::TextureBuffer* _dst 
     else
       success = true;
 
-
+#ifdef SAT_DBG
     if (dbgOutput_)
     {
       ACG::GLDebug::dumpBufferData(GL_TEXTURE_BUFFER, _dst->getBufferId(), SAT_DBG_DIR "1d_act.bin");
       if (blockSumsOut_.is_valid())
         ACG::GLDebug::dumpBufferData(GL_TEXTURE_BUFFER, blockSumsOut_.getBufferId(), SAT_DBG_DIR "1d_bsum.bin");
     }
+#endif
   }
 
   return success;
@@ -247,8 +252,10 @@ bool PrefixSumPlan::execute( ACG::Texture2D* _src, ACG::Texture2D* _dst )
 
   GLSL::Program* satCS = ACG::ShaderCache::getInstance()->getComputeProgram("SAT/psum.glsl", &macros_);
 
+#ifdef SAT_DBG
   if (dbgOutput_)
     ACG::GLDebug::dumpTexture2D(_src->id(), 0, _src->getFormat(), _src->getType(), elemSize_ * _src->getWidth() * _src->getHeight(),  QString(QString(SAT_DBG_DIR "2d_") + QString(dbgTranposedInput_ ? "cols_" : "rows_") + QString("input.bin")).toLatin1(), true);
+#endif
 
   if (satCS)
   {
@@ -283,9 +290,10 @@ bool PrefixSumPlan::execute( ACG::Texture2D* _src, ACG::Texture2D* _dst )
     if (dbgProfile_)
       std::cout << "psum-blockscan: " << perfCounter_.elapsedMs() << std::endl;
 
-
+#ifdef SAT_DBG
     if (dbgOutput_)
       ACG::GLDebug::dumpTexture2D(_dst->id(), 0, _dst->getFormat(), _dst->getType(), elemSize_ * _dst->getWidth() * _dst->getHeight(), (QString(SAT_DBG_DIR "2d_pass1") + QString(dbgTranposedInput_? "_cols" : "_rows") + QString(".bin")).toLatin1(), true);
+#endif
 
     if (numWorkGroupsX_ > 1)
     {
@@ -330,13 +338,14 @@ bool PrefixSumPlan::execute( ACG::Texture2D* _src, ACG::Texture2D* _dst )
 
     // now, each row contains the prefixsums of the rows in the input image
 
-
+#ifdef SAT_DBG
     if (dbgOutput_)
     {
       ACG::GLDebug::dumpTexture2D(_dst->id(), 0, _dst->getFormat(), _dst->getType(), elemSize_ * _dst->getWidth() * _dst->getHeight(),  QString(QString(SAT_DBG_DIR "2d_")  + QString(dbgTranposedInput_? "_cols" : "_rows") + QString(".bin")).toLatin1(), true);
       if (blockSums2DOut_.is_valid())
         ACG::GLDebug::dumpTexture2D(blockSums2DOut_.id(), 0, blockSums2DOut_.getFormat(), blockSums2DOut_.getType(), elemSize_ * width_ * height_,  QString(QString(SAT_DBG_DIR "2d_")  + QString(dbgTranposedInput_? "_cols" : "_rows") + QString("_bsum.bin")).toLatin1(), true);
     }
+#endif
   }
 
   return success;
@@ -496,8 +505,10 @@ bool SATPlan::execute( ACG::Texture2D* _src, ACG::Texture2D* _dst )
     // transpose
     success = transpose(_dst, &transposedSrc_);
 
+#ifdef SAT_DBG
     if (rows_->debugOutputEnabled())
       ACG::GLDebug::dumpTexture2D(transposedSrc_.id(), 0, transposedSrc_.getFormat(), transposedSrc_.getType(), rows_->elemSize() * transposedSrc_.getWidth() * transposedSrc_.getHeight(),  SAT_DBG_DIR "2d_rows_tr.bin", true);
+#endif
 
     if (success)
     {
@@ -510,16 +521,20 @@ bool SATPlan::execute( ACG::Texture2D* _src, ACG::Texture2D* _dst )
       if (rows_->profilingEnabled())
         std::cout << "cols: " << perfCounter_.elapsedMs() << std::endl;
 
+#ifdef SAT_DBG
       if (rows_->debugOutputEnabled())
         ACG::GLDebug::dumpTexture2D(transposedDst_.id(), 0, transposedSrc_.getFormat(), transposedSrc_.getType(), rows_->elemSize() * transposedSrc_.getWidth() * transposedSrc_.getHeight(),  SAT_DBG_DIR "2d_sat_tr.bin", true);
+#endif
 
       if (success)
       {
         // transpose back
         success = transpose(&transposedDst_, _dst);
 
+#ifdef SAT_DBG
         if (rows_->debugOutputEnabled())
           ACG::GLDebug::dumpTexture2D(_dst->id(), 0, transposedSrc_.getFormat(), transposedSrc_.getType(), rows_->elemSize() * transposedSrc_.getWidth() * transposedSrc_.getHeight(),  SAT_DBG_DIR "2d_sat.bin", true);
+#endif
       }
     }
   }
@@ -746,7 +761,9 @@ bool PrefixSumPlan::test2D( int w, int h, int cmpMem, int fullOutput )
   {
     int bufSize = numTestVals * elemDim * 4;
     char* pActBuf = new char[bufSize];
+#ifdef SAT_DBG
     ACG::GLDebug::getTextureData2D(testBufferOut.id(), 0, finfo.format(), finfo.type(), bufSize, pActBuf);
+#endif
 
     if (memcmp(pActBuf, &expectedData[0], bufSize))
     {
@@ -767,9 +784,10 @@ bool PrefixSumPlan::test2D( int w, int h, int cmpMem, int fullOutput )
         fclose(pFile);
       }
 
+#ifdef SAT_DBG
       sprintf(szFileOut, SAT_DBG_DIR "2d_act_%dx%d.bin", w,h);
       ACG::GLDebug::dumpTexture2D(testBufferOut.id(), 0, finfo.format(), finfo.type(), numTestVals * elemDim * 4, szFileOut, true);
-
+#endif
 
 
       expectedData = testData;
