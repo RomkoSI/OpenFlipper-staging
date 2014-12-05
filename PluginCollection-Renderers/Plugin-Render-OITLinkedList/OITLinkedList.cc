@@ -59,7 +59,7 @@
 OIT with per pixel linked list (A-Buffer).
 
 Implementation based on AMD presentation at GDC 2010:
- "OIT and GI using DX11 linked lists" by Nick Thibieroz & Holger Grün
+ "OIT and GI using DX11 linked lists" by Nick Thibieroz & Holger Grï¿½n
 
 
 porting from DX11 to GL:
@@ -189,9 +189,6 @@ void OITLinkedList::render(ACG::GLState* _glState, Viewer::ViewerProperties& _pr
 
 void OITLinkedList::prepareBuffers(int w, int h)
 {
-// check for glew symbol definition
-#ifdef GL_ARB_shader_image_load_store
-
   ACG::Vec2ui screenSize = ACG::Vec2ui(GLuint(w), GLuint(h));
 
   // prepare buffers
@@ -216,16 +213,10 @@ void OITLinkedList::prepareBuffers(int w, int h)
 
   // wait for buffer allocation
   glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-  
-#endif
 }
 
 void OITLinkedList::renderOIT(int w, int h, bool multisampled)
 {
-// check for glew symbol definition
-#ifdef GL_ARB_shader_image_load_store
-
-
   ACG::Vec2ui screenSize = ACG::Vec2ui(GLuint(w), GLuint(h));
 
   prepareBuffers(w, h);
@@ -390,19 +381,12 @@ void OITLinkedList::renderOIT(int w, int h, bool multisampled)
 
 //    std::cout << "buffer size too small: " << actualFragmentCount << std::endl;
   }
-
-#endif
 }
 
 
 
 QString OITLinkedList::checkOpenGL()
 {
-// check for glew symbol definition
-#ifndef GL_ARB_shader_image_load_store
-  return QString("Built with outdated glew library! Please update glew and rebuild");
-#endif
-
   // Get version and check
   if ( !ACG::openGLVersion(4,2) )
     return QString("Insufficient OpenGL Version! OpenGL 4.2 or higher required");
