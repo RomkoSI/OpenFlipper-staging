@@ -71,7 +71,7 @@ PostProcessorGaussBlur::~PostProcessorGaussBlur()
 QString PostProcessorGaussBlur::checkOpenGL()
 {
   if (!ACG::openGLVersion(3,0))
-    return QString("SSAO plugin requires OpenGL 3.0!");
+    return QString("Gauss blur plugin requires OpenGL 3.0!");
 
   return QString("");
 }
@@ -135,7 +135,6 @@ void PostProcessorGaussBlur::optionDialog( bool )
 
   connect(radiusSlider, SIGNAL(sliderMoved(int)), this, SLOT(radiusChanged(int)));
   connect(sigmaSlider, SIGNAL(sliderMoved(int)), this, SLOT(sigmaChanged(int)));
-//   connect(outlineColorBtn, SIGNAL(colorChanged(QColor)), this, SLOT(outlineColorChanged(QColor)));
 
 
   optionsDlg->show();

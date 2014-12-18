@@ -41,128 +41,68 @@
 \*===========================================================================*/
 
 
-#include <ACG/GL/acg_glew.hh>
+#include <QObject>
 
-#include "PostProcessorPoissonBlur.hh"
+#include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/BasePlugin/PostProcessorInterface.hh>
 
-#include <ACG/GL/ScreenQuad.hh>
-#include <ACG/GL/ShaderCache.hh>
-#include <ACG/GL/GLFormatInfo.hh>
+#include <ACG/GL/globjects.hh>
+#include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/FBO.hh>
+#include <vector>
 
-#include <QDialog>
-#include <QLabel>
-#include <QSlider>
-#include <QVBoxLayout>
-#include <QPushButton>
+#include <ACG/GL/FilterKernels.hh>
 
-
-PostProcessorPoissonBlur::PostProcessorPoissonBlur()
-  : blur_(new ACG::PoissonBlurFilter(1.0f, 0.5f)), radius_(1.0f), minDist_(0.5f)
+class PostProcessorRadialBlur : public QObject, BaseInterface, PostProcessorInterface
 {
-}
+  Q_OBJECT
+    Q_INTERFACES(BaseInterface)
+    Q_INTERFACES(PostProcessorInterface)
 
-
-PostProcessorPoissonBlur::~PostProcessorPoissonBlur()
-{
-  delete blur_;
-}
-
-QString PostProcessorPoissonBlur::checkOpenGL()
-{
-  if (!ACG::openGLVersion(3,0))
-    return QString("Poisson blur plugin requires OpenGL 3.0!");
-
-  return QString("");
-}
-
-
-void PostProcessorPoissonBlur::postProcess( ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output )
-{
-  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
-  glDrawBuffer(_output.drawBuffer_);
-
-  glDepthMask(1);
-  glColorMask(1,1,1,1);
-
-
-
-  float scale = 1.0f / std::min(_input[0]->width, _input[0]->height);
-
-  blur_->execute(_input[0]->colorTex_, scale);
-}
-
-QAction* PostProcessorPoissonBlur::optionsAction()
-{
-  QAction * action = new QAction("Gaussian Blur Options" , this );
-
-  connect(action,SIGNAL(triggered( bool )),this,SLOT(optionDialog( bool )));
-
-  return action;
-}
-
-void PostProcessorPoissonBlur::optionDialog( bool )
-{
-  //generate widget
-  QDialog* optionsDlg = new QDialog();
-  QVBoxLayout* layout = new QVBoxLayout();
-  layout->setAlignment(Qt::AlignTop);
-
-  QColor curColor;
-  curColor.setRgbF(0.3f, 0.2f, 0.7f);
-
-  QLabel* label = new QLabel(tr("Radius [0, 32]:"));
-  layout->addWidget(label);
-
-  QSlider* radiusSlider = new QSlider(Qt::Horizontal);
-  radiusSlider->setRange(1, 32);
-  radiusSlider->setValue(1);
-  radiusSlider->setTracking(true);
-  layout->addWidget(radiusSlider);
-
-
-  label = new QLabel(tr("MinDistance [0.1, 10.0]:"));
-  layout->addWidget(label);
-
-  QSlider* minDistSlider = new QSlider(Qt::Horizontal);
-  minDistSlider->setRange(1, 100);
-  minDistSlider->setValue(5);
-  minDistSlider->setTracking(true);
-  layout->addWidget(minDistSlider);
-
-
-  QPushButton* btn = new QPushButton("Recompute");
-  layout->addWidget(btn);
-
-  optionsDlg->setLayout(layout);
-
-
-  connect(btn, SIGNAL(clicked()), this, SLOT(recompute()));
-  connect(radiusSlider, SIGNAL(sliderMoved(int)), this, SLOT(radiusChanged(int)));
-  connect(minDistSlider, SIGNAL(sliderMoved(int)), this, SLOT(minDistChanged(int)));
-
-
-  optionsDlg->show();
-}
-
-
-void PostProcessorPoissonBlur::recompute(  )
-{
-  delete blur_;
-
-  blur_ = new ACG::PoissonBlurFilter(radius_, minDist_);
-}
-
-void PostProcessorPoissonBlur::radiusChanged(int r)
-{
-  radius_ = float(r);
-}
-
-void PostProcessorPoissonBlur::minDistChanged(int d)
-{
-  minDist_ = float(d) * 0.1f;
-}
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2( postprocessorpoissonblurplugin , PostProcessorPoissonBlur );
+#if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "org.OpenFlipper.Plugins.Plugin-PostProcessorRadialBlur")
 #endif
+
+public:
+  PostProcessorRadialBlur();
+  ~PostProcessorRadialBlur();
+
+public :
+  QString name() { return (QString("Radial Blur Postprocessor Plugin")); };
+  QString description( ) { return (QString(tr("Radial blur"))); };
+
+
+public slots:
+  QString version() { return QString("1.0"); };
+
+  QAction* optionsAction();
+
+private slots:
+
+  void postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output);
+
+  QString postProcessorName() {return QString("Radial Blur");}
+
+  QString checkOpenGL();
+
+
+
+  void optionDialog(bool);
+
+
+  void samplesChanged(int);
+  void radiusChanged(int);
+  void intensityChanged(int);
+
+  void centerXChanged(int);
+  void centerYChanged(int);
+
+private:
+
+  ACG::RadialBlurFilter blur_;
+
+  float radius_;
+  float intensity_;
+  ACG::Vec2f center_;
+};
 
