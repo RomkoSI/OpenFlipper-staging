@@ -48,6 +48,9 @@
 
 #include <ACG/GL/globjects.hh>
 #include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/FBO.hh>
+
+#include <map>
 
 class PostProcessorFXAAPlugin : public QObject, BaseInterface, PostProcessorInterface
 {
@@ -83,6 +86,12 @@ class PostProcessorFXAAPlugin : public QObject, BaseInterface, PostProcessorInte
 
     /// fxaa shader
     GLSL::Program* fxaa_;
+
+    /// luma shader
+    GLSL::Program* luma_;
+
+    /// fbo with rt that contains luminance in alpha
+    ACG::FBO lumaRT_;
 
   private:
 };

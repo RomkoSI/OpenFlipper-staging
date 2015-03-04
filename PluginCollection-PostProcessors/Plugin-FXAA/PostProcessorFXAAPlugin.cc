@@ -54,13 +54,14 @@
 
 
 PostProcessorFXAAPlugin::PostProcessorFXAAPlugin() :
-fxaa_(0)
+fxaa_(0), luma_(0)
 {
 }
 
 PostProcessorFXAAPlugin::~PostProcessorFXAAPlugin()
 {
   delete fxaa_;
+  delete luma_;
 }
 
 
@@ -69,8 +70,11 @@ QString PostProcessorFXAAPlugin::postProcessorName() {
 }
 
 QString PostProcessorFXAAPlugin::checkOpenGL() {
-  if ( ! ACG::openGLVersion(3, 0) )
+  if (!ACG::openGLVersion(3, 0))
     return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
+
+  if (!ACG::checkExtensionSupported("ARB_texture_gather"))
+    return QString("Missing extension: ARB_texture_gather");
 
   return QString("");
 }
@@ -79,10 +83,16 @@ QString PostProcessorFXAAPlugin::checkOpenGL() {
 void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const std::vector<const PostProcessorInput*>& _input, const PostProcessorOutput& _output) {
 
   // ======================================================================================================
-  // Load shader if needed
+  // Load shaders if needed
   // ======================================================================================================
   if (!fxaa_)
-    fxaa_ = GLSL::loadProgram("FXAA/screenquad.glsl", "FXAA/fxaa.glsl");
+    fxaa_ = GLSL::loadProgram("ScreenQuad/screenquad.glsl", "FXAA/fxaa.glsl");
+
+  if (!luma_)
+    luma_ = GLSL::loadProgram("ScreenQuad/screenquad.glsl", "FXAA/luma.glsl");
+
+  if (!fxaa_ || !luma_)
+    return;
 
   // ======================================================================================================
   // Bind input texture
@@ -92,17 +102,31 @@ void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const std::vec
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
 
+
+  // ======================================================================================================
+  // Put luma in alpha channel
+  // ======================================================================================================
+
+  if (!lumaRT_.width())
+    lumaRT_.attachTexture2D(GL_COLOR_ATTACHMENT0, _input[0]->width, _input[0]->height, GL_RGBA, GL_RGBA, GL_CLAMP, GL_LINEAR, GL_LINEAR);
+  else
+    lumaRT_.resize(_input[0]->width, _input[0]->height);
+
+  lumaRT_.bind();
+
+  luma_->use();
+  luma_->setUniform("textureSampler", 0);
+
+  ACG::ScreenQuad::draw(luma_);
+
+  glBindTexture(GL_TEXTURE_2D, lumaRT_.getAttachment(GL_COLOR_ATTACHMENT0));
+
   // ======================================================================================================
   // Bind output FBO
   // ======================================================================================================
 
   glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
   glDrawBuffer(_output.drawBuffer_);
-
-  // ======================================================================================================
-  // Clear rendering buffer
-  // ======================================================================================================
-   _glstate->clearBuffers();
 
   // ======================================================================================================
   // Setup render states
@@ -121,8 +145,14 @@ void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const std::vec
   fxaa_->use();
   fxaa_->setUniform("textureSampler", 0);
 
-  ACG::Vec2f texcoordOffset(1.0f / float(_input[0]->width), 1.0f / float(_input[0]->height));
-  fxaa_->setUniform("texcoordOffset", texcoordOffset);
+  ACG::Vec2f texelSize(1.0f / float(_input[0]->width), 1.0f / float(_input[0]->height));
+  fxaa_->setUniform("fxaaQualityRcpFrame", texelSize);
+
+  ACG::Vec4f fxaaConsoleRcp(-texelSize[0], -texelSize[1], texelSize[0], texelSize[1]);
+  fxaa_->setUniform("fxaaConsoleRcpFrameOpt", fxaaConsoleRcp * 0.5f);
+
+  fxaa_->setUniform("fxaaConsoleRcpFrameOpt2", fxaaConsoleRcp * 2.0f);
+
 
   // ======================================================================================================
   // Execute
