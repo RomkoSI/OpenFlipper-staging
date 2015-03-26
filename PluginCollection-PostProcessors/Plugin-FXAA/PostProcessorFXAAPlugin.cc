@@ -73,9 +73,6 @@ QString PostProcessorFXAAPlugin::checkOpenGL() {
   if (!ACG::openGLVersion(3, 0))
     return QString("Insufficient OpenGL Version! OpenGL 3.0 or higher required");
 
-  if (!ACG::checkExtensionSupported("ARB_texture_gather"))
-    return QString("Missing extension: ARB_texture_gather");
-
   return QString("");
 }
 
@@ -98,10 +95,7 @@ void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const std::vec
   // Bind input texture
   // ======================================================================================================
 
-  glActiveTexture(GL_TEXTURE0);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, _input[0]->colorTex_);
-
+  _input[0]->bindColorTex(0);
 
   // ======================================================================================================
   // Put luma in alpha channel
@@ -125,18 +119,7 @@ void PostProcessorFXAAPlugin::postProcess(ACG::GLState* _glstate, const std::vec
   // Bind output FBO
   // ======================================================================================================
 
-  glBindFramebuffer(GL_FRAMEBUFFER, _output.fbo_);
-  glDrawBuffer(_output.drawBuffer_);
-
-  // ======================================================================================================
-  // Setup render states
-  // ======================================================================================================
-
-  glDepthMask(1);
-  glColorMask(1,1,1,1);
-
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
+  _output.bind();
 
   // ======================================================================================================
   // Setup shader

@@ -1,6 +1,4 @@
 #version 130
-#extension GL_ARB_texture_gather : enable
-
 
 // http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
 
@@ -30,6 +28,15 @@ uniform vec4 fxaaConsole360ConstDir = vec4(0,0,0,0);
 #define FXAA_PC 1
 #define FXAA_GLSL_130 1
 #define FXAA_QUALITY__PRESET 39
+
+
+#ifdef GL_ARB_gpu_shader5
+  #extension GL_ARB_gpu_shader5 : enable
+  #define FXAA_GATHER4_ALPHA 1
+#else
+  #define FXAA_GATHER4_ALPHA 0
+#endif
+
 
 
 #include "Fxaa3_11.h"
