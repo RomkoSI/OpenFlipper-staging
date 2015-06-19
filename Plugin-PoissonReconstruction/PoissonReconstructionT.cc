@@ -43,13 +43,19 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
 #endif
     TreeOctNode::SetAllocator( MEMORY_ALLOCATOR_BLOCK_SIZE );
 
+    std::cerr << "Tree construction with depth " << m_parameter.Depth << std::endl;
     tree.setBSplineData( m_parameter.Depth );
     double maxMemoryUsage;
     tree.maxMemoryUsage=0;
     XForm4x4< Real > xForm = XForm4x4< Real >::Identity();
     int pointCount = tree.setTreeMemory( _pt_data ,  m_parameter.Depth ,  m_parameter.MinDepth , m_parameter.Depth , Real(m_parameter.SamplesPerNode),
                                          m_parameter.Scale , m_parameter.Confidence , m_parameter.PointWeight , m_parameter.AdaptiveExponent , xForm );
+
+    std::cerr << "Tree Clipping" << std::endl;
+
     tree.ClipTree();
+
+    std::cerr << "Tree Finalize" << std::endl;
     tree.finalize( m_parameter.IsoDivide );
 
     DumpOutput( "Input Points: %d\n" , pointCount );

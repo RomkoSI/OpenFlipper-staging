@@ -163,7 +163,9 @@ int PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 
       n_points += mesh->n_vertices();
 
-      pt_data.reserve( n_points );
+      emit log(LOGINFO,QString("Adding %1 points from Object %2").arg(mesh->n_vertices()).arg(*idIter) );
+
+      pt_data.reserve( n_points * 6 );
       TriMesh::VertexIter vit = mesh->vertices_begin();
       for ( ; vit != mesh->vertices_end(); ++vit )
       {
@@ -182,7 +184,9 @@ int PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 
       n_points += mesh->n_vertices();
 
-      pt_data.reserve( n_points );
+      emit log(LOGINFO,QString("Adding %1 points from Object %2").arg(mesh->n_vertices()).arg(*idIter) );
+
+      pt_data.reserve( n_points * 6 );
       PolyMesh::VertexIter vit = mesh->vertices_begin();
       for ( ; vit != mesh->vertices_end(); ++vit )
       {
@@ -209,7 +213,9 @@ int PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 
       n_points += cloud->numSplats();
 
-      pt_data.reserve( n_points );
+      emit log(LOGINFO,QString("Adding %1 points from Object %2").arg(cloud->numSplats()).arg(*idIter) );
+
+      pt_data.reserve( n_points * 6 );
       for (unsigned i = 0 ; i < cloud->numSplats(); ++i )
       {
         pt_data.push_back( cloud->positions( i )[0] );
@@ -231,6 +237,8 @@ int PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
   //create and reconstruct mesh
   if ( !pt_data.empty() ) {
 
+    emit log(LOGINFO,"Creating Object");
+
     // Add empty triangle mesh
 
     emit addEmptyObject ( DATA_TRIANGLE_MESH, meshId );
@@ -247,6 +255,8 @@ int PoissonPlugin::poissonReconstruct(IdList _ids, int _depth)
 
     ACG::PoissonReconstructionT<TriMesh>::Parameter params;
     params.Depth = _depth;
+
+    emit log(LOGINFO,"Starting reconstruction");
 
     if ( pr.run( pt_data, *final_mesh, params ) ) {
       emit log(LOGINFO,"Reconstruction succeeded");
