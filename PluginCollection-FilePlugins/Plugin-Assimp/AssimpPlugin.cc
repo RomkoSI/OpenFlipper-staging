@@ -176,15 +176,13 @@ int AssimpPlugin::convertAiSceneToOpenMesh(const aiScene *_scene, QString _objec
     if (polyMeshObj) {
       convertPolyMeshToAiMesh(polyMeshObj->mesh(), _scene->mMeshes[i]);
 
-      polyMeshObj->update();
-      polyMeshObj->show();
+      emit updatedObject(polyMeshObj->id(), UPDATE_ALL);
 
       ids.push_back(object->id());
     } else if (triMeshObj) {
       convertAiMeshToTriMesh(triMeshObj->mesh(), _scene->mMeshes[i]);
 
-      triMeshObj->update();
-      triMeshObj->show();
+      emit updatedObject(triMeshObj->id(), UPDATE_ALL);
 
       ids.push_back(object->id());
     }
@@ -200,9 +198,6 @@ int AssimpPlugin::convertAiSceneToOpenMesh(const aiScene *_scene, QString _objec
       returnId = RPC::callFunctionValue<int>("datacontrol","groupObjects", ids, _objectName);
     }
   }
-
-  // Update viewport
-  PluginFunctions::viewAll();
 
   return returnId;
 }
