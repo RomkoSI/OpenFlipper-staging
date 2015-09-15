@@ -8,11 +8,11 @@ or have other flaws.
 ## Using the Staging repository
 
 
-* Clone the Free branch to get OpenFlipper
+* Clone the free branch to get OpenFlipper
 
     git clone http://www.openflipper.org:9000/OpenFlipper-Free/OpenFlipper-Free.git OpenFlipper-Staging
   
-* Enter the Directory and Clone the Staging repository into it:
+* Enter the directory and clone the Staging repository into it:
 
     git clone http://www.openflipper.org:9000/OpenFlipper-Free/OpenFlipper-Staging.git Package-Staging
 
