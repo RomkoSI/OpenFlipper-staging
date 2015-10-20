@@ -10,11 +10,11 @@ or have other flaws.
 
 * Clone the free branch to get OpenFlipper
 
-    git clone http://www.openflipper.org:9000/OpenFlipper-Free/OpenFlipper-Free.git OpenFlipper-Staging
+    git clone --recursive https://www.graphics.rwth-aachen.de:9000/OpenFlipper-Free/OpenFlipper-Free.git OpenFlipper-Staging
   
 * Enter the directory and clone the Staging repository into it:
 
-    git clone http://www.openflipper.org:9000/OpenFlipper-Free/OpenFlipper-Staging.git Package-Staging
+    git clone --recursive https://www.graphics.rwth-aachen.de:9000/OpenFlipper-Free/OpenFlipper-Staging.git Package-Staging
 
     `Note`: You need to name the checkout folder Package-something to get it picked up by the build System
         
