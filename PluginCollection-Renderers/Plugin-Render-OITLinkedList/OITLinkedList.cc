@@ -40,7 +40,7 @@
 *                                                                            *
 \*===========================================================================*/
 
-#include <ACG/GL/acg_glew.hh>
+#include <ACG/GL/gl_compat_4_4.hh>
 
 #include "OITLinkedList.hh"
 
