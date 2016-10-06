@@ -51,6 +51,12 @@ run( std::vector< Real >& _pt_data, MeshT& _mesh, const Parameter& _parameter )
     int pointCount = tree.setTreeMemory( _pt_data ,  m_parameter.Depth ,  m_parameter.MinDepth , m_parameter.Depth , Real(m_parameter.SamplesPerNode),
                                          m_parameter.Scale , m_parameter.Confidence , m_parameter.PointWeight , m_parameter.AdaptiveExponent , xForm );
 
+    if (pointCount <= 0)
+    {
+      std::cerr << "Invalid Input Points" << std::endl;
+      return false;
+    }
+
     std::cerr << "Tree Clipping" << std::endl;
 
     tree.ClipTree();
