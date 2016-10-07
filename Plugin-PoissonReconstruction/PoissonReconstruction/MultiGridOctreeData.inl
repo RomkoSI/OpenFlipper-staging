@@ -1237,26 +1237,37 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
     }
 
     normals = new std::vector< Point3D<Real> >();
+    unsigned int curPt = 0;
     cnt = 0;
 //    pointStream->reset();
     Point3D< Real > p , n;
-    while ( cnt < _pts_stream.size()/(2*DIMENSION) )
+    while (curPt < _pts_stream.size()/(2*DIMENSION) )
 //    while( pointStream->nextPoint( p , n ) )
     {
         for ( int i = 0; i < DIMENSION; ++i )
         {
-            p[i] = _pts_stream[2*DIMENSION*cnt + i];
-            n[i] = _pts_stream[2*DIMENSION*cnt + DIMENSION + i];
+            p[i] = _pts_stream[2*DIMENSION*curPt + i];
+            n[i] = _pts_stream[2*DIMENSION*curPt + DIMENSION + i];
         }
 
         n *= Real(-1.);
         p = xForm * p , n = xFormN * n;
         p = ( p - _center ) / _scale;
-        if( !_inBounds(p) ) continue;
+        if (!_inBounds(p))
+        {
+          // skip point
+          ++curPt;
+          continue;
+        }
         myCenter = Point3D< Real >( Real(0.5) , Real(0.5) , Real(0.5) );
         myWidth = Real(1.0);
         Real l = Real( Length( n ) );
-        if( l!=l || l<=EPSILON ) continue;
+        if (l != l || l <= EPSILON)
+        {
+          // skip point
+          ++curPt;
+          continue;
+        }
         if( !useConfidence ) n /= l;
 
         l = Real(1.);
@@ -1338,6 +1349,7 @@ int Octree<Degree>::setTreeMemory( std::vector< Real >& _pts_stream, int maxDept
                 d++;
             }
         }
+        curPt++;
         cnt++;
     }
 
